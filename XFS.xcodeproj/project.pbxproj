@@ -7,25 +7,41 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		66E689DCCD3757E590047A81 /* Pods_XFS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67CC2BB63274ED75C1050185 /* Pods_XFS.framework */; };
 		9792CC0B28E7E7AF00C9D040 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9792CC0A28E7E7AF00C9D040 /* AppDelegate.swift */; };
 		9792CC0D28E7E7AF00C9D040 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9792CC0C28E7E7AF00C9D040 /* SceneDelegate.swift */; };
-		9792CC0F28E7E7AF00C9D040 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9792CC0E28E7E7AF00C9D040 /* ViewController.swift */; };
 		9792CC1228E7E7AF00C9D040 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9792CC1028E7E7AF00C9D040 /* Main.storyboard */; };
 		9792CC1528E7E7AF00C9D040 /* XFS.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 9792CC1328E7E7AF00C9D040 /* XFS.xcdatamodeld */; };
 		9792CC1728E7E7AF00C9D040 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9792CC1628E7E7AF00C9D040 /* Assets.xcassets */; };
 		9792CC1A28E7E7AF00C9D040 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9792CC1828E7E7AF00C9D040 /* LaunchScreen.storyboard */; };
+		97F21E2128E8D2DF00A23084 /* FellowVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97F21E2028E8D2DF00A23084 /* FellowVC.swift */; };
+		97F21E2328E8D30800A23084 /* DiscoverVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97F21E2228E8D30800A23084 /* DiscoverVC.swift */; };
+		97F21E2528E8D32200A23084 /* NearbyVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97F21E2428E8D32200A23084 /* NearbyVC.swift */; };
+		97F21E2728E8D33F00A23084 /* HomeVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97F21E2628E8D33F00A23084 /* HomeVC.swift */; };
+		97F21E2A28E8DE0B00A23084 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97F21E2928E8DE0B00A23084 /* Constants.swift */; };
+		97F21E2E28E92A3A00A23084 /* WaterFallVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97F21E2D28E92A3A00A23084 /* WaterFallVC.swift */; };
+		97F21E3028E92D2E00A23084 /* WaterFallwCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97F21E2F28E92D2E00A23084 /* WaterFallwCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		67CC2BB63274ED75C1050185 /* Pods_XFS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_XFS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		73D27019784FB05FA7C6D9CF /* Pods-XFS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XFS.release.xcconfig"; path = "Target Support Files/Pods-XFS/Pods-XFS.release.xcconfig"; sourceTree = "<group>"; };
 		9792CC0728E7E7AF00C9D040 /* XFS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = XFS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9792CC0A28E7E7AF00C9D040 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9792CC0C28E7E7AF00C9D040 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		9792CC0E28E7E7AF00C9D040 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		9792CC1128E7E7AF00C9D040 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		9792CC1428E7E7AF00C9D040 /* XFS.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = XFS.xcdatamodel; sourceTree = "<group>"; };
 		9792CC1628E7E7AF00C9D040 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9792CC1928E7E7AF00C9D040 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9792CC1B28E7E7AF00C9D040 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		97F21E2028E8D2DF00A23084 /* FellowVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FellowVC.swift; sourceTree = "<group>"; };
+		97F21E2228E8D30800A23084 /* DiscoverVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoverVC.swift; sourceTree = "<group>"; };
+		97F21E2428E8D32200A23084 /* NearbyVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyVC.swift; sourceTree = "<group>"; };
+		97F21E2628E8D33F00A23084 /* HomeVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeVC.swift; sourceTree = "<group>"; };
+		97F21E2928E8DE0B00A23084 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		97F21E2D28E92A3A00A23084 /* WaterFallVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterFallVC.swift; sourceTree = "<group>"; };
+		97F21E2F28E92D2E00A23084 /* WaterFallwCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterFallwCell.swift; sourceTree = "<group>"; };
+		C35B81B4E4E5547332B1656E /* Pods-XFS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-XFS.debug.xcconfig"; path = "Target Support Files/Pods-XFS/Pods-XFS.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -33,6 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				66E689DCCD3757E590047A81 /* Pods_XFS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,6 +61,8 @@
 			children = (
 				9792CC0928E7E7AF00C9D040 /* XFS */,
 				9792CC0828E7E7AF00C9D040 /* Products */,
+				9E5ABBBE703FA781BCDB2F8B /* Pods */,
+				FAAFDC9D15308BC390F55567 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -60,14 +79,45 @@
 			children = (
 				9792CC0A28E7E7AF00C9D040 /* AppDelegate.swift */,
 				9792CC0C28E7E7AF00C9D040 /* SceneDelegate.swift */,
-				9792CC0E28E7E7AF00C9D040 /* ViewController.swift */,
+				97F21E2828E8D34900A23084 /* Home */,
 				9792CC1028E7E7AF00C9D040 /* Main.storyboard */,
+				97F21E2D28E92A3A00A23084 /* WaterFallVC.swift */,
+				97F21E2F28E92D2E00A23084 /* WaterFallwCell.swift */,
+				97F21E2928E8DE0B00A23084 /* Constants.swift */,
 				9792CC1628E7E7AF00C9D040 /* Assets.xcassets */,
 				9792CC1828E7E7AF00C9D040 /* LaunchScreen.storyboard */,
 				9792CC1B28E7E7AF00C9D040 /* Info.plist */,
 				9792CC1328E7E7AF00C9D040 /* XFS.xcdatamodeld */,
 			);
 			path = XFS;
+			sourceTree = "<group>";
+		};
+		97F21E2828E8D34900A23084 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				97F21E2628E8D33F00A23084 /* HomeVC.swift */,
+				97F21E2028E8D2DF00A23084 /* FellowVC.swift */,
+				97F21E2228E8D30800A23084 /* DiscoverVC.swift */,
+				97F21E2428E8D32200A23084 /* NearbyVC.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		9E5ABBBE703FA781BCDB2F8B /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				C35B81B4E4E5547332B1656E /* Pods-XFS.debug.xcconfig */,
+				73D27019784FB05FA7C6D9CF /* Pods-XFS.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		FAAFDC9D15308BC390F55567 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				67CC2BB63274ED75C1050185 /* Pods_XFS.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -77,9 +127,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 9792CC1E28E7E7AF00C9D040 /* Build configuration list for PBXNativeTarget "XFS" */;
 			buildPhases = (
+				D59000D12B6D6B4500FE5CBD /* [CP] Check Pods Manifest.lock */,
 				9792CC0328E7E7AF00C9D040 /* Sources */,
 				9792CC0428E7E7AF00C9D040 /* Frameworks */,
 				9792CC0528E7E7AF00C9D040 /* Resources */,
+				60AB9AAFA129120415A4843F /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -136,15 +188,63 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		60AB9AAFA129120415A4843F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-XFS/Pods-XFS-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-XFS/Pods-XFS-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-XFS/Pods-XFS-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D59000D12B6D6B4500FE5CBD /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-XFS-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		9792CC0328E7E7AF00C9D040 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9792CC0F28E7E7AF00C9D040 /* ViewController.swift in Sources */,
+				97F21E2728E8D33F00A23084 /* HomeVC.swift in Sources */,
+				97F21E2128E8D2DF00A23084 /* FellowVC.swift in Sources */,
 				9792CC1528E7E7AF00C9D040 /* XFS.xcdatamodeld in Sources */,
 				9792CC0B28E7E7AF00C9D040 /* AppDelegate.swift in Sources */,
 				9792CC0D28E7E7AF00C9D040 /* SceneDelegate.swift in Sources */,
+				97F21E2328E8D30800A23084 /* DiscoverVC.swift in Sources */,
+				97F21E2528E8D32200A23084 /* NearbyVC.swift in Sources */,
+				97F21E2E28E92A3A00A23084 /* WaterFallVC.swift in Sources */,
+				97F21E3028E92D2E00A23084 /* WaterFallwCell.swift in Sources */,
+				97F21E2A28E8DE0B00A23084 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -286,6 +386,7 @@
 		};
 		9792CC1F28E7E7AF00C9D040 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C35B81B4E4E5547332B1656E /* Pods-XFS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -294,11 +395,14 @@
 				DEVELOPMENT_TEAM = MPV859CKBH;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = XFS/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "小粉书";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -306,14 +410,18 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jerry.xfs.XFS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
 		9792CC2028E7E7AF00C9D040 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 73D27019784FB05FA7C6D9CF /* Pods-XFS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -322,11 +430,14 @@
 				DEVELOPMENT_TEAM = MPV859CKBH;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = XFS/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "小粉书";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIStatusBarStyle = "";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -334,9 +445,12 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jerry.xfs.XFS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
