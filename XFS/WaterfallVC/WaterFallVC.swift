@@ -21,7 +21,7 @@ class WaterFallVC: UICollectionViewController{
         layout.columnCount = 2
         layout.minimumColumnSpacing = kWaterFallpadding
         layout.minimumInteritemSpacing = kWaterFallpadding
-        layout.sectionInset = UIEdgeInsets(top: kWaterFallpadding, left: kWaterFallpadding, bottom: kWaterFallpadding, right: kWaterFallpadding)
+        layout.sectionInset = UIEdgeInsets(top: kWaterFallpadding   , left: kWaterFallpadding, bottom: kWaterFallpadding, right: kWaterFallpadding)
     }
 
     /*

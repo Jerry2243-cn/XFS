@@ -18,4 +18,7 @@ let kWaterFallVCID = "waterFallVCID"
 let kWaterFallCellID = "waterFallCellID"
 let kWaterFallpadding:CGFloat = 4
 
+let kNearbyCellID = "nearbyCellID"
+let kFellowCellID = "fellowCellID"
+
 let kChannels = ["推荐","电影","美食","好物品","美妆","穿搭","日常","心情"]
