@@ -8,10 +8,10 @@
 import UIKit
 import CHTCollectionViewWaterfallLayout
 import XLPagerTabStrip
-
+import SKPhotoBrowser
 
 class FellowVC: UICollectionViewController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -24,7 +24,7 @@ class FellowVC: UICollectionViewController {
         layout.columnCount = 1
         layout.minimumColumnSpacing = kWaterFallpadding
         layout.minimumInteritemSpacing = kWaterFallpadding
-        layout.sectionInset = UIEdgeInsets(top: kWaterFallpadding   , left: kWaterFallpadding, bottom: kWaterFallpadding, right: kWaterFallpadding)
+        layout.sectionInset = UIEdgeInsets(top: kWaterFallpadding   , left: 0, bottom: kWaterFallpadding, right: 0)
 
         // Do any additional setup after loading the view.
     }
@@ -57,7 +57,16 @@ class FellowVC: UICollectionViewController {
     
         // Configure the cell
         cell.imageView.image = UIImage(named: "\(indexPath.item + 1)")
-    
+        cell.avatarImageView.image = UIImage(named: "5")
+        cell.nicknameLable.text = "🐔你太美"
+        if indexPath.item % 4 == 1{
+            cell.titleAndContentLabel.superview?.isHidden = true
+        }else{
+            cell.titleAndContentLabel.text = "全民制作人们大家好，我是练习时长两年半的个人练习生蔡徐坤，喜欢唱、跳、rap、篮球"
+        }
+        cell.likeButton.setTitle("11", for: .normal)
+        cell.favouriteButton.setTitle("45", for: .normal)
+        cell.commentButton.setTitle("14", for: .normal)
         return cell
     }
 
@@ -96,7 +105,19 @@ class FellowVC: UICollectionViewController {
 
 extension FellowVC: CHTCollectionViewDelegateWaterfallLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        UIImage(named: "\(indexPath.item + 1)")!.size
+        let cellW = UIScreen.main.bounds.width
+        let size = UIImage(named: "\(indexPath.item + 1)")!.size
+        let h = size.height
+        let w = size.width
+        var imageRato = h / w
+        if imageRato > 1.35 {
+            imageRato = 1.35
+        }else if imageRato < 0.5 {
+            imageRato = 0.5
+        }
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kFellowCellID, for: indexPath) as! FellowCell
+        let cellH = cellW * imageRato + cell.topInfoStack.bounds.height + cell.bottomInfoStack.bounds.height + 48//后续更改
+        return CGSize(width: cellW, height: cellH )
     }
 }
 
@@ -105,3 +126,4 @@ extension FellowVC: IndicatorInfoProvider{
         IndicatorInfo(title: "关注")
     }
 }
+

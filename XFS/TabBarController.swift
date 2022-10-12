@@ -17,7 +17,7 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         
         let tabBarApperance = UITabBarAppearance()
         tabBarApperance.configureWithDefaultBackground()
-//
+
         let tabBarItemApperance = UITabBarItemAppearance()
         
         tabBarItemApperance.normal.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: -13)
@@ -53,8 +53,7 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
             config.maxCameraZoomFactor = 5.0
             
             config.library.defaultMultipleSelection = true
-            config.library.maxNumberOfItems = 9
-            config.library.minNumberOfItems = 1
+            config.library.maxNumberOfItems = kMaxPhotoCount
             config.library.spacingBetweenItems = 1.5
             config.library.preSelectItemOnMultipleSelection = false
             
@@ -79,16 +78,5 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         
         return true
     }
-    
-    
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

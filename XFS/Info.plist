@@ -2,6 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>记录笔记位置需要访问您的定位权限</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>需要使用您的相机来拍摄图片或视频</string>
 	<key>NSMicrophoneUsageDescription</key>

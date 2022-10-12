@@ -12,6 +12,8 @@ import XLPagerTabStrip
 class WaterFallVC: UICollectionViewController{
     
     var channel = ""
+    
+    let testTitle = "今天也是打🏀的一天～"
    
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,6 +24,7 @@ class WaterFallVC: UICollectionViewController{
         layout.minimumColumnSpacing = kWaterFallpadding
         layout.minimumInteritemSpacing = kWaterFallpadding
         layout.sectionInset = UIEdgeInsets(top: kWaterFallpadding   , left: kWaterFallpadding, bottom: kWaterFallpadding, right: kWaterFallpadding)
+        collectionView.backgroundColor = .secondarySystemBackground
     }
 
     /*
@@ -50,9 +53,16 @@ class WaterFallVC: UICollectionViewController{
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kWaterFallCellID, for: indexPath) as! WaterFallwCell
     
-        // Configure the cell
-        cell.imageView.image = UIImage(named: "\(indexPath.item + 1)")
+        cell.photosImageView.image = UIImage(named: "\(indexPath.item + 1)")
     
+        cell.avatarImageView.image = UIImage(named: "5")
+        if indexPath.item % 3 == 1 {
+            cell.titleLable.isHidden = true
+        }else{
+            cell.titleLable.text = testTitle
+        }
+        cell.nicknamLableView.text = "🐔你太美"
+        cell.likeButton.setTitle("11.4万", for: .normal)
         return cell
     }
 
@@ -91,7 +101,22 @@ class WaterFallVC: UICollectionViewController{
 
 extension WaterFallVC: CHTCollectionViewDelegateWaterfallLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        UIImage(named: "\(indexPath.item + 1)")!.size
+        let cellW = (UIScreen.main.bounds.width - kWaterFallpadding * 3) / 2
+        let size = UIImage(named: "\(indexPath.item + 1)")!.size
+        let h = size.height
+        let w = size.width
+        var imageRato = h / w
+        if imageRato > 1.35 {
+            imageRato = 1.35
+        }else if imageRato < 2.0 / 3.0 {
+            imageRato = 2.0 / 3.0
+        }
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kWaterFallCellID, for: indexPath) as! WaterFallwCell
+        var cellH = cellW * imageRato + cell.infoStack.bounds.height + 20
+        if indexPath.item % 3 == 1 {
+            cellH -= cell.titleLable.bounds.height + cell.infoStack.spacing
+        }
+        return CGSize(width: cellW, height: cellH )
     }
 }
 
