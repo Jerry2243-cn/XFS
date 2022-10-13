@@ -12,5 +12,5 @@ protocol TopicSelectViewControllerDelegate {
 }
 
 protocol POIViewControllerDelegate {
-    func updateLocation(title: String, address: String)
+    func updateLocation(poi:POI)
 }

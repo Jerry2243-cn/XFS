@@ -18,4 +18,6 @@
 #import <AMapFoundationKit/AMapFoundationKit.h>
 #import <AMapLocationKit/AMapLocationKit.h>
 #import <AMapSearchKit/AMapSearchKit.h>
+
+//边界刷新
 #import "MJRefresh.h"

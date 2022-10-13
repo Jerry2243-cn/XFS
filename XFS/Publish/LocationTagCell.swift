@@ -9,7 +9,9 @@ import UIKit
 
 class LocationTagCell: UICollectionViewCell {
     
-    @IBOutlet weak var locationTagButton: UIButton!
+    var poi = POI()
+    
+    @IBOutlet weak var titleLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

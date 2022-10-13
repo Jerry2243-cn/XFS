@@ -13,6 +13,20 @@ import XLPagerTabStrip
 class NearbyVC: UICollectionViewController {
     
     var location = ""
+    
+    let testTitle = ["环可能看见你哭你健康你就",
+                     "环可能看见你哭你健",
+                     "sjsfjvisfjvoisfjisfvjfsi",
+                     "sdsjjvkfvks",
+                     "北京北京北京看北京北京北京看病就加不加班",
+                     "",
+                     "环可能看见你哭你健康你就",
+                     "环可能看见你哭你健",
+                     "sjsfjvisfjvoisfjisfvjfsi",
+                     "北京北京北京看北京北京北京看病就加不加班",
+                     "zxc",
+                     "",
+                     "s的陈年旧事"]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,6 +37,7 @@ class NearbyVC: UICollectionViewController {
         layout.minimumColumnSpacing = kWaterFallpadding
         layout.minimumInteritemSpacing = kWaterFallpadding
         layout.sectionInset = UIEdgeInsets(top: kWaterFallpadding   , left: kWaterFallpadding, bottom: kWaterFallpadding, right: kWaterFallpadding)
+        collectionView.backgroundColor = .secondarySystemBackground
     }
 
     /*
@@ -51,9 +66,18 @@ class NearbyVC: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kNearbyCellID, for: indexPath) as! NearbyCell
     
-        // Configure the cell
         cell.imageView.image = UIImage(named: "\(indexPath.item + 1)")
     
+        cell.avatarImage.image = UIImage(named: "5")
+        
+        if testTitle[indexPath.item] == "" {
+            cell.titleLabel.isHidden = true
+        }else{
+            cell.titleLabel.text = testTitle[indexPath.item]
+        }
+        
+        cell.nicknameLabel.text = "🐔你太美"
+        cell.distanceLabel.text = "11.4km"
         return cell
     }
 
@@ -91,8 +115,29 @@ class NearbyVC: UICollectionViewController {
 }
 
 extension NearbyVC: CHTCollectionViewDelegateWaterfallLayout{
+    
+    
+    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        UIImage(named: "\(indexPath.item + 1)")!.size
+        let cellW = (UIScreen.main.bounds.width - kWaterFallpadding * 3) / 2
+        let size = UIImage(named: "\(indexPath.item + 1)")!.size
+        let h = size.height
+        let w = size.width
+        var imageRato = h / w
+        if imageRato > 1.35 {
+            imageRato = 1.35
+        }else if imageRato < 2.0 / 3.0 {
+            imageRato = 2.0 / 3.0
+        }
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kNearbyCellID, for: indexPath) as! NearbyCell
+        var cellH = cellW * imageRato + cell.infoStack.bounds.height + 20
+        let lines = cell.titleLabel.textToThisLabelLines(text: testTitle[indexPath.item] as NSString)
+            cellH += cell.titleLabel.bounds.height * CGFloat(lines - 1)
+        if lines == 0{
+            cellH -= cell.infoStack.spacing
+        }
+        
+        return CGSize(width: cellW, height: cellH )
     }
 }
 

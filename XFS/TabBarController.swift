@@ -66,9 +66,24 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
             picker.didFinishPicking { [unowned picker] items, cancelled in
                 if cancelled {
                     print("用户点击取消按钮")
+                    picker.dismiss(animated: true)
+                    
+                    
+                    
                 }
                 
-                picker.dismiss(animated: true, completion: nil)
+                let vc = self.storyboard!.instantiateViewController(withIdentifier: kNoteEditingVC) as! NoteEditingVC
+                var photos:[UIImage] = []
+                for item in items{
+                    switch item{
+                    case let .photo(photo):
+                        photos.append(photo.image)
+                    case .video(v: _): break
+                        
+                    }
+                }
+                vc.photos = photos
+                picker.pushViewController(vc, animated: true)
             }
             present(picker, animated: true, completion: nil)
             

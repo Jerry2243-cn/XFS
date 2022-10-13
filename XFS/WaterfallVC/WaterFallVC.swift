@@ -13,7 +13,21 @@ class WaterFallVC: UICollectionViewController{
     
     var channel = ""
     
-    let testTitle = "今天也是打🏀的一天～"
+    let testTitle = ["环可能看见你哭你健康你就",
+                     "环可能看见你哭你健",
+                     "sjsfjvisfjvoisfjisfvjfsi",
+                     "sdsjjvkfvks",
+                     "北京北京北京看北京北京北京看病就加不加班",
+                     "",
+                     "环可能看见你哭你健康你就",
+                     "环可能看见你哭你健",
+                     "sjsfjvisfjvoisfjisfvjfsi",
+                     "北京北京北京看北京北京北京看病就加不加班",
+                     "zxc",
+                     "",
+                     "s的陈年旧事"]
+    
+
    
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,22 +61,25 @@ class WaterFallVC: UICollectionViewController{
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of items
-        return 13
+        13
     }
-
+    
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kWaterFallCellID, for: indexPath) as! WaterFallwCell
     
         cell.photosImageView.image = UIImage(named: "\(indexPath.item + 1)")
     
-        cell.avatarImageView.image = UIImage(named: "5")
-        if indexPath.item % 3 == 1 {
-            cell.titleLable.isHidden = true
+        cell.avatarImage.image = UIImage(named: "5")
+
+        if testTitle[indexPath.item] == "" {
+            cell.titleLabel.isHidden = true
         }else{
-            cell.titleLable.text = testTitle
+            cell.titleLabel.text = testTitle[indexPath.item]
         }
-        cell.nicknamLableView.text = "🐔你太美"
+        
+        cell.nicknameLabel.text = "🐔你太美"
         cell.likeButton.setTitle("11.4万", for: .normal)
+        
         return cell
     }
 
@@ -101,6 +118,7 @@ class WaterFallVC: UICollectionViewController{
 
 extension WaterFallVC: CHTCollectionViewDelegateWaterfallLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+     
         let cellW = (UIScreen.main.bounds.width - kWaterFallpadding * 3) / 2
         let size = UIImage(named: "\(indexPath.item + 1)")!.size
         let h = size.height
@@ -113,9 +131,12 @@ extension WaterFallVC: CHTCollectionViewDelegateWaterfallLayout{
         }
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kWaterFallCellID, for: indexPath) as! WaterFallwCell
         var cellH = cellW * imageRato + cell.infoStack.bounds.height + 20
-        if indexPath.item % 3 == 1 {
-            cellH -= cell.titleLable.bounds.height + cell.infoStack.spacing
+        let lines = cell.titleLabel.textToThisLabelLines(text: testTitle[indexPath.item] as NSString)
+            cellH += cell.titleLabel.bounds.height * CGFloat(lines - 1)
+        if lines == 0{
+            cellH -= cell.infoStack.spacing
         }
+        
         return CGSize(width: cellW, height: cellH )
     }
 }

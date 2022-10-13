@@ -24,9 +24,11 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
         contentTextView.inputAccessoryView as! TextViewAView
     }
     //坐标及POI信息
-    lazy var latitude = 0.0
-    lazy var longtitude = 0.0
-    lazy var locations: [String] = []
+//    lazy var latitude = 0.0
+//    lazy var longtitude = 0.0
+    lazy var myPOI = POI()
+    lazy var selectedPOI = POI()
+    lazy var locations: [POI] = []
     
     //询问地图权限
     let locationManagerM = CLLocationManager()
@@ -37,7 +39,7 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
     lazy var aroundSearchRequest: AMapPOIAroundSearchRequest = {
         let request = AMapPOIAroundSearchRequest()
         request.types = kPOITypes
-        request.location = AMapGeoPoint.location(withLatitude: CGFloat(latitude), longitude: CGFloat(longtitude))
+        request.location = AMapGeoPoint.location(withLatitude: CGFloat(myPOI.latitude), longitude: CGFloat(myPOI.longtitude))
         return request
     }()
     
@@ -51,6 +53,7 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
     
     @IBOutlet weak var topicImage: UIImageView!
     @IBOutlet weak var topicLabel: UILabel!
+    @IBOutlet weak var claerTopicButton: UIButton!
     @IBOutlet weak var topicTipLabel: UILabel!
     
     @IBOutlet weak var locationImage: UIImageView!
@@ -80,11 +83,20 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
         }
         
     }
-    @IBAction func addLocation(_ sender: UIButton) {
-        locationImage.tintColor = .link
-        locationLabel.text = sender.titleLabel?.text
-        locationLabel.textColor = .link
-        locationTagsCollectionView.isHidden = true
+//    @IBAction func addLocation(_ sender: UIButton) {
+//        locationImage.tintColor = .link
+//        locationLabel.text = sender.titleLabel?.text
+//        locationLabel.textColor = .link
+//        locationTagsCollectionView.isHidden = true
+//    }
+//
+    
+    
+    @IBAction func claerTopicAction(_ sender: Any) {
+        topicImage.tintColor = .secondaryLabel
+        topicLabel.text = "参与话题"
+        topicLabel.textColor = .secondaryLabel
+        claerTopicButton.isHidden = true
     }
     
 
@@ -104,6 +116,8 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
         titleCountLable.isHidden = true
         titleCountLable.text = "\(kMaxTitleCount)"
         hideKeyboardWhenTappedAround()
+        
+        claerTopicButton.isHidden = true
         
         //content相关配置
         let paragraphStyle = NSMutableParagraphStyle()
@@ -161,8 +175,8 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
             guard let self = self else {return}
             
             if let location = location {
-                self.latitude = location.coordinate.latitude
-                self.longtitude = location.coordinate.longitude
+                self.myPOI.latitude = location.coordinate.latitude
+                self.myPOI.longtitude = location.coordinate.longitude
                 
                 //搜索周边POI
                 self.mapSearch?.aMapPOIAroundSearch(self.aroundSearchRequest)
@@ -179,7 +193,12 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
         }
         locationTagsCollectionView.isHidden = false
         for poi in response.pois{
-            self.locations.append(poi.name!)
+            
+            let province = poi.province.description == poi.city.description ? "" : poi.province
+            let address = poi.address.description == poi.district ? "" : poi.address
+            let fixedAddress = "\(province!)\(poi.city!)\(poi.district!)\(address!)"
+            
+            self.locations.append(POI(name: poi.name, address: fixedAddress, latitude: poi.location.latitude, longtitude: poi.location.longitude))
         }
         locationTagsCollectionView.reloadData()
     }
@@ -190,6 +209,7 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
         }
         if let vc = segue.destination as? POIVC{
             vc.POIDelegate = self
+            vc.selectedPOI = selectedPOI
         }
     }
 
@@ -198,10 +218,11 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
 //反向传值获取定位信息处理
 extension NoteEditingVC: POIViewControllerDelegate{
     
-    func updateLocation(title: String, address: String) {
-        let nolocation = title == "不显示位置"
+    func updateLocation(poi:POI) {
+        selectedPOI = poi
+        let nolocation = poi.name == "不显示位置"
         locationImage.tintColor = nolocation ? .secondaryLabel : .link
-        locationLabel.text = nolocation ? "添加地点" : title
+        locationLabel.text = nolocation ? "添加地点" : poi.name
         locationLabel.textColor = nolocation ? .secondaryLabel : .link
         locationTagsCollectionView.isHidden = !nolocation
     }
@@ -216,6 +237,7 @@ extension NoteEditingVC: TopicSelectViewControllerDelegate{
         topicLabel.text = topic
         topicLabel.textColor = .link
         topicImage.tintColor = .link
+        claerTopicButton.isHidden = false
     }
 }
 
@@ -242,23 +264,36 @@ extension NoteEditingVC {
     }
 }
 
-//图片预览
+
 extension NoteEditingVC: UICollectionViewDelegate, SKPhotoBrowserDelegate{
     
-    //图片预览
+    //图片cell和POI Tag cell的选中处理
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        // 1. create SKPhoto Array from UIImage
-        var images: [SKPhoto] = []
-        for photo in photos{
-            images.append(SKPhoto.photoWithImage(photo))
+        
+        if collectionView == locationTagsCollectionView{
+            let cell = collectionView.cellForItem(at: indexPath) as! LocationTagCell
+            selectedPOI = cell.poi
+            locationImage.tintColor = .link
+            locationLabel.text = selectedPOI.name
+            locationLabel.textColor = .link
+            locationTagsCollectionView.isHidden = true
         }
         
-        // 2. create PhotoBrowser Instance, and present from your viewController.
-        let browser = SKPhotoBrowser(photos: images, initialPageIndex: indexPath.item)
-        browser.delegate = self
-        SKPhotoBrowserOptions.displayAction = false
-        SKPhotoBrowserOptions.displayDeleteButton = true
-        present(browser, animated: true)
+        if collectionView == photoCollectionView{
+            // 1. create SKPhoto Array from UIImage
+            var images: [SKPhoto] = []
+            for photo in photos{
+                images.append(SKPhoto.photoWithImage(photo))
+            }
+            
+            // 2. create PhotoBrowser Instance, and present from your viewController.
+            let browser = SKPhotoBrowser(photos: images, initialPageIndex: indexPath.item)
+            browser.delegate = self
+            SKPhotoBrowserOptions.displayAction = false
+            SKPhotoBrowserOptions.displayDeleteButton = true
+            present(browser, animated: true)
+        }
+        
     }
     
     //预览界面的删除按钮
@@ -303,7 +338,8 @@ extension NoteEditingVC: UICollectionViewDataSource{
         }
         if collectionView == locationTagsCollectionView{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kLocationTagCellID, for: indexPath) as! LocationTagCell
-            cell.locationTagButton.setTitle(locations[indexPath.item], for: .normal)
+            cell.poi = locations[indexPath.item]
+            cell.titleLabel.text = locations[indexPath.item].name
             return cell
         }
         return UICollectionViewCell()

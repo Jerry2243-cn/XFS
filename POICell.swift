@@ -9,15 +9,22 @@ import UIKit
 
 class POICell: UITableViewCell {
     
-    var poi = ["",""]{
-        didSet{
-            titleLabel.text = poi[0]
-            addressLabel.text = poi[1]
-        }
-    }
+    var poi = POI()
+    
+//    var poi = ["",""]{
+//        didSet{
+//            titleLabel.text = poi[0]
+//            addressLabel.text = poi[1]
+//        }
+//    }
 
     @IBOutlet weak var addressLabel: UILabel!
     @IBOutlet weak var titleLabel: UILabel!
 
+    override func awakeFromNib() {
+        super.awakeFromNib()
+        titleLabel.text = poi.name
+        addressLabel.text = poi.address
+    }
 
 }

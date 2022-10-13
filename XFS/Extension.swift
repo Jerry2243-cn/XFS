@@ -68,3 +68,24 @@ extension Bundle {
         fatalError("加载\(type)类型的View失败失败")
     }
 }
+
+extension UILabel {
+    func textToThisLabelLines(text:NSString) -> Int {
+        
+    guard let myText = text as NSString? else {
+      return 0
+    }
+        if myText == "" {
+            return 0
+        }
+    // Call self.layoutIfNeeded() if your view uses auto layout
+    let rect = CGSize(width: self.bounds.width, height: CGFloat.greatestFiniteMagnitude)
+    let labelSize = myText.boundingRect(with: rect, options: .usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font: self.font as Any], context: nil)
+        
+        print(labelSize.width)
+        print(labelSize.height)
+        print(self.frame.width)
+        
+        return Int(modf(labelSize.width / (self.frame.width / 2.0)).0) + 1
+  }
+}

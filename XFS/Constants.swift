@@ -23,7 +23,7 @@ let kFellowCellID = "fellowCellID"
 let kPhotoCellID = "photoCellID"
 let kPhotoFooterID = "photoFooterID"
 let kTopicCellID = "topicCellID"
-let kPOICell = "POICell"
+let kPOICell = "POICellID"
 let kLocationTagCellID = "locationTagCellID"
 
 let kWaterFallpadding:CGFloat = 5
