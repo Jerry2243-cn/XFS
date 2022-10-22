@@ -9,12 +9,21 @@ import UIKit
 import YPImagePicker
 import SKPhotoBrowser
 import AMapLocationKit
+import Alamofire
+
 
 class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDelegate{
     
     var photos: [UIImage] = [
         UIImage(named: "1")!, UIImage(named: "2")!
     ]
+    
+    var saveNoteOptions: (()->())?
+    var publishNoteOptions: (()->())?
+    var draftNote: DraftNote?
+
+    var channel = ""
+    var topic = ""
     
     //计算属性
     var photosCount: Int{
@@ -23,17 +32,15 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
     var textViewAView: TextViewAView {
         contentTextView.inputAccessoryView as! TextViewAView
     }
-    //坐标及POI信息
-//    lazy var latitude = 0.0
-//    lazy var longtitude = 0.0
+    
+    // MARK: 坐标及POI信息
     lazy var myPOI = POI()
     lazy var selectedPOI = POI()
     lazy var locations: [POI] = []
-    
     //询问地图权限
-    let locationManagerM = CLLocationManager()
+//    let locationManagerM = CLLocationManager()
     
-    //高德地图SDK相关引用
+    //MARK: 高德地图SDK相关引用
     let locationManager = AMapLocationManager()
     lazy var mapSearch = AMapSearchAPI()
     lazy var aroundSearchRequest: AMapPOIAroundSearchRequest = {
@@ -43,7 +50,7 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
         return request
     }()
     
-    //布局相关outlet
+    //MARK: 布局相关outlet
     @IBOutlet weak var photoCollectionView: UICollectionView!
     
     @IBOutlet weak var titleTextField: UITextField!
@@ -60,9 +67,11 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
     @IBOutlet weak var locationLabel: UILabel!
     @IBOutlet weak var locationTagsCollectionView: UICollectionView!
 
-    //title及addLocationTag相关action
+    //MARK: title及addLocationTag相关action
     @IBAction func titleTFBegin(_ sender: UITextField) {
         titleCountLable.isHidden = false
+        let remainWords = kMaxTitleCount - (sender.text?.count ?? 0)
+        titleCountLable.text = "\(remainWords)"
     }
     @IBAction func titleTFEnd(_ sender: UITextField) {
         titleCountLable.isHidden = true
@@ -81,17 +90,7 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
                 showTextHUD(showView: view, "标题字数不能超过\(kMaxTitleCount)")
             }
         }
-        
     }
-//    @IBAction func addLocation(_ sender: UIButton) {
-//        locationImage.tintColor = .link
-//        locationLabel.text = sender.titleLabel?.text
-//        locationLabel.textColor = .link
-//        locationTagsCollectionView.isHidden = true
-//    }
-//
-    
-    
     @IBAction func claerTopicAction(_ sender: Any) {
         topicImage.tintColor = .secondaryLabel
         topicLabel.text = "参与话题"
@@ -99,16 +98,64 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
         claerTopicButton.isHidden = true
     }
     
-
+    //MARK: 发布与草稿按钮Action
+    @IBAction func publishButton(_ sender: Any) {
+        if let _ = self.draftNote{
+            navigationController?.popViewController(animated: true)
+        }else{
+            postNote()
+            dismiss(animated: true)
+        }
+        publishNoteOptions?()
+    }
+    
+    @IBAction func saveButton(_ sender: Any) {
+        guard contentTextView.text.count <= kMaxContentCount else {
+            showTextHUD(showView: (parent?.view)!, "正文内容不得超过1000字")
+            return
+        }
+       
+        let draftNote = self.draftNote ?? DraftNote(context: context)
+        
+        draftNote.coverPhoto = photos[0].getJpeg(.medium)
+        var photos: [Data] = []
+        
+        for photo in self.photos {
+            if let pngData = photo.pngData(){
+                photos.append(pngData)
+            }
+        }
+        draftNote.photos = try? JSONEncoder().encode(photos)
+        draftNote.title = titleTextField.text
+        draftNote.content = contentTextView.text
+        draftNote.poiName = selectedPOI.name
+        draftNote.poiAddress = selectedPOI.address
+        draftNote.latitude = selectedPOI.latitude
+        draftNote.longtitude = selectedPOI.longtitude
+        draftNote.channel = channel
+        draftNote.topic = topic
+        draftNote.updatedAt = Date()
+        appDelegate.saveContext()
+        
+        if let _ = self.draftNote{
+            navigationController?.popViewController(animated: true)
+        }else{
+            dismiss(animated: true)
+        }
+        saveNoteOptions?()
+    }
+    
+    
+    // MARK: viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+                
+        loadDraftNoteData()
         //定位相关
         locationConfig()
         mapSearch?.delegate = self
-        locationTagsCollectionView.isHidden = true
-        locationManagerM.requestWhenInUseAuthorization()
-        
+        locationTagsCollectionView.isHidden = selectedPOI != POI()
+//        locationManagerM.requestWhenInUseAuthorization()
         //图片拖拽手势开启
         photoCollectionView.dragInteractionEnabled = true
         
@@ -137,7 +184,39 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
         
     }
     
-    //高德地图相关配置
+    func postNote(){
+        let postData = Note(
+            title : titleTextField.text ?? "",
+            content : contentTextView.text ?? "",
+            poi : selectedPOI,
+            user: User(),
+            topic: Topic(name: topic)
+        )
+        AF.request(
+            "http://127.0.0.1:8080/postTest",
+            method: .post,
+            parameters: postData,
+            encoder: JSONParameterEncoder.default
+        ).response{res in
+            debugPrint(res)
+        }
+    }
+    
+    func loadDraftNoteData(){
+        if let note = draftNote{
+            titleTextField.text = note.title
+            contentTextView.text = note.content
+            if note.topic != ""{
+                updateTopic(channel: note.channel!, topic: note.topic!)
+            }
+            if note.poiName != ""{
+                let poi = POI(name: note.poiName!,address: note.poiAddress!,latitude: note.latitude, longtitude: note.longtitude)
+                updateLocation(poi: poi)
+            }
+        }
+    }
+    
+    //MARK: 高德地图相关配置及获取坐标
     func locationConfig(){
         locationManager.delegate = self
         
@@ -177,34 +256,42 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
             if let location = location {
                 self.myPOI.latitude = location.coordinate.latitude
                 self.myPOI.longtitude = location.coordinate.longitude
-                
                 //搜索周边POI
                 self.mapSearch?.aMapPOIAroundSearch(self.aroundSearchRequest)
                 self.locationTagsCollectionView.reloadData()
             }
             
+//            if let reGeocode = reGeocode{
+//                self.city = reGeocode.city
+//            }
+//
         })
     }
     
-    //高德地图数据回调处理
+    //MARK: 高德地图数据回调处理
     func onPOISearchDone(_ request: AMapPOISearchBaseRequest!, response: AMapPOISearchResponse!) {
         if response.count == 0 {
             return
         }
-        locationTagsCollectionView.isHidden = false
+
         for poi in response.pois{
             
             let province = poi.province.description == poi.city.description ? "" : poi.province
             let address = poi.address.description == poi.district ? "" : poi.address
             let fixedAddress = "\(province!)\(poi.city!)\(poi.district!)\(address!)"
             
-            self.locations.append(POI(name: poi.name, address: fixedAddress, latitude: poi.location.latitude, longtitude: poi.location.longitude))
+            self.locations.append(POI(name: poi.name,
+                                      address: fixedAddress,
+                                      city: poi.city,
+                                      latitude: poi.location.latitude,
+                                      longtitude: poi.location.longitude))
         }
         locationTagsCollectionView.reloadData()
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let vc = segue.destination as? TopicSelectVC{
+            view.endEditing(true)
             vc.PVDelegate = self
         }
         if let vc = segue.destination as? POIVC{
@@ -215,33 +302,37 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
 
 }
 
-//反向传值获取定位信息处理
+//MARK: 反向传值获取定位信息处理
 extension NoteEditingVC: POIViewControllerDelegate{
     
     func updateLocation(poi:POI) {
         selectedPOI = poi
-        let nolocation = poi.name == "不显示位置"
+        let nolocation = poi.name == "不显示位置" || poi.name == ""
         locationImage.tintColor = nolocation ? .secondaryLabel : .link
-        locationLabel.text = nolocation ? "添加地点" : poi.name
+        locationLabel.text = nolocation ? "添加地点" : selectedPOI.name
         locationLabel.textColor = nolocation ? .secondaryLabel : .link
-        locationTagsCollectionView.isHidden = !nolocation
+        locationTagsCollectionView.isHidden = locations.isEmpty ? true : !nolocation
+        
     }
     
     
 }
 
-//反向传值，将topictable中的值传入noteedidting
+//MARK: 反向传值，将topictable中的值传入noteedidting
 extension NoteEditingVC: TopicSelectViewControllerDelegate{
     func updateTopic(channel: String, topic: String) {
+        let noTopic = topic == ""
+        self.channel = channel
+        self.topic = topic
         topicTipLabel.isHidden = true
-        topicLabel.text = topic
-        topicLabel.textColor = .link
-        topicImage.tintColor = .link
-        claerTopicButton.isHidden = false
+        topicLabel.text = noTopic ? "参与话题" : topic
+        topicLabel.textColor = noTopic ? .secondaryLabel : .link
+        topicImage.tintColor = noTopic ? .secondaryLabel : .link
+        claerTopicButton.isHidden = noTopic
     }
 }
 
-//ContentTextView文字统计与完成按钮显示
+//MARK: ContentTextView文字统计与完成按钮显示
 extension NoteEditingVC: UITextViewDelegate{
     
     func textViewDidChange(_ textView: UITextView) {
@@ -249,15 +340,15 @@ extension NoteEditingVC: UITextViewDelegate{
             let count = textView.text?.count ?? 0
             textViewAView.textCountLabel.text = "\(count)"
             
-            textViewAView.textCountStack.isHidden = count <= 1000
-            textViewAView.OKButton.isHidden = count > 1000
+            textViewAView.textCountStack.isHidden = count <= kMaxContentCount
+            textViewAView.OKButton.isHidden = count > kMaxContentCount
             
         }
     }
     
 }
 
-//键盘上完成按钮舰艇
+//MARK: 键盘上完成按钮舰艇
 extension NoteEditingVC {
     @objc private func resignTextView(){
         contentTextView.resignFirstResponder()
@@ -267,12 +358,12 @@ extension NoteEditingVC {
 
 extension NoteEditingVC: UICollectionViewDelegate, SKPhotoBrowserDelegate{
     
-    //图片cell和POI Tag cell的选中处理
+    //MARK: 图片cell和POITag cell的选中处理
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         if collectionView == locationTagsCollectionView{
             let cell = collectionView.cellForItem(at: indexPath) as! LocationTagCell
-            selectedPOI = cell.poi
+            selectedPOI = cell.poi!
             locationImage.tintColor = .link
             locationLabel.text = selectedPOI.name
             locationLabel.textColor = .link
@@ -296,7 +387,7 @@ extension NoteEditingVC: UICollectionViewDelegate, SKPhotoBrowserDelegate{
         
     }
     
-    //预览界面的删除按钮
+    //MARK: 预览界面的删除按钮
     func removePhoto(_ browser: SKPhotoBrowser, index: Int, reload: @escaping (() -> Void)) {
         
         if self.photosCount == 1 {
@@ -317,7 +408,7 @@ extension NoteEditingVC: UICollectionViewDelegate, SKPhotoBrowserDelegate{
     }
 }
 
-//Collection数据初始化
+//MARK: Collection数据初始化
 extension NoteEditingVC: UICollectionViewDataSource{
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -339,7 +430,7 @@ extension NoteEditingVC: UICollectionViewDataSource{
         if collectionView == locationTagsCollectionView{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kLocationTagCellID, for: indexPath) as! LocationTagCell
             cell.poi = locations[indexPath.item]
-            cell.titleLabel.text = locations[indexPath.item].name
+//            cell.titleLabel.text = locations[indexPath.item].name
             return cell
         }
         return UICollectionViewCell()
@@ -360,10 +451,9 @@ extension NoteEditingVC: UICollectionViewDataSource{
     
 }
 
-//添加图片
 extension NoteEditingVC{
     
-    //监听添加照片按钮
+    //MARK: 监听添加照片按钮
     @objc private func addPhoto(sender: UIButton){
         if photosCount < kMaxPhotoCount{
             var config = YPImagePickerConfiguration()
@@ -396,7 +486,7 @@ extension NoteEditingVC{
     }
 }
 
-//图片拖拽
+//MARK: 图片拖拽
 extension NoteEditingVC: UICollectionViewDragDelegate, UICollectionViewDropDelegate{
     func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
         
@@ -431,7 +521,7 @@ extension NoteEditingVC: UICollectionViewDragDelegate, UICollectionViewDropDeleg
     
 }
 
-//标题TextField
+//MARK: 标题TextField
 extension NoteEditingVC: UITextFieldDelegate{
     
     //标题TF键盘完成消失

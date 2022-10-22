@@ -55,15 +55,11 @@ class FellowVC: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kFellowCellID, for: indexPath) as! FellowCell
     
-        // Configure the cell
         cell.imageView.image = UIImage(named: "\(indexPath.item + 1)")
         cell.avatarImageView.image = UIImage(named: "5")
         cell.nicknameLable.text = "🐔你太美"
-        if indexPath.item % 4 == 1{
-            cell.titleAndContentLabel.superview?.isHidden = true
-        }else{
-            cell.titleAndContentLabel.text = "全民制作人们大家好，我是练习时长两年半的个人练习生蔡徐坤，喜欢唱、跳、rap、篮球"
-        }
+        cell.titleAndContentLabel.text = "全民制作人们大家好，我是练习时长两年半的个人练习生蔡徐坤，喜欢唱、跳、rap、篮球"
+        cell.titleAndContentLabel.superview?.isHidden = indexPath.item % 4 == 1
         cell.likeButton.setTitle("11", for: .normal)
         cell.favouriteButton.setTitle("45", for: .normal)
         cell.commentButton.setTitle("14", for: .normal)
@@ -112,11 +108,14 @@ extension FellowVC: CHTCollectionViewDelegateWaterfallLayout{
         var imageRato = h / w
         if imageRato > 1.35 {
             imageRato = 1.35
-        }else if imageRato < 0.5 {
-            imageRato = 0.5
+        }else if imageRato < 2.0 / 3.0 {
+            imageRato = 2.0 / 3.0
         }
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kFellowCellID, for: indexPath) as! FellowCell
-        let cellH = cellW * imageRato + cell.topInfoStack.bounds.height + cell.bottomInfoStack.bounds.height + 48//后续更改
+        var cellH = cellW * imageRato + cell.topInfoStack.bounds.height + cell.bottomInfoStack.bounds.height + 48//后续更改
+        if indexPath.item % 4 == 1{
+            cellH -= 29
+        }
         return CGSize(width: cellW, height: cellH )
     }
 }

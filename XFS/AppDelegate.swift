@@ -12,7 +12,6 @@ import CoreData
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         config()
@@ -90,5 +89,6 @@ extension AppDelegate{
         AMapSearchAPI.updatePrivacyAgree(.didAgree)
         AMapSearchAPI.updatePrivacyShow(.didShow, privacyInfo: .didContain)
         
+        UINavigationBar.appearance().tintColor = .label
     }
 }

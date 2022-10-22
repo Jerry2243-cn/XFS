@@ -68,8 +68,6 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
                     print("用户点击取消按钮")
                     picker.dismiss(animated: true)
                     
-                    
-                    
                 }
                 
                 let vc = self.storyboard!.instantiateViewController(withIdentifier: kNoteEditingVC) as! NoteEditingVC
@@ -78,11 +76,17 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
                     switch item{
                     case let .photo(photo):
                         photos.append(photo.image)
-                    case .video(v: _): break
-                        
+                    default:
+                        continue
                     }
                 }
                 vc.photos = photos
+                vc.saveNoteOptions = {
+                    self.showTextHUD(showView: self.view, "笔记保存成功")
+                }
+                vc.publishNoteOptions = {
+                    self.showTextHUD(showView: self.view, "发布按钮测试")
+                }
                 picker.pushViewController(vc, animated: true)
             }
             present(picker, animated: true, completion: nil)

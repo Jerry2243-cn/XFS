@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import MBProgressHUD
+import DateToolsSwift
 
 //给UIView添加右侧工具栏自定义属性
 extension UIView{
@@ -70,22 +71,71 @@ extension Bundle {
 }
 
 extension UILabel {
-    func textToThisLabelLines(text:NSString) -> Int {
-        
-    guard let myText = text as NSString? else {
-      return 0
+    
+    func getLineSpace() -> CGFloat{
+//        attributedText
+        return 0
     }
+    
+    //判断行数
+    func textToThisLabelLines(text:String) -> Int {
+      let myText = NSString(string: text)
         if myText == "" {
             return 0
         }
     // Call self.layoutIfNeeded() if your view uses auto layout
     let rect = CGSize(width: self.bounds.width, height: CGFloat.greatestFiniteMagnitude)
     let labelSize = myText.boundingRect(with: rect, options: .usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font: self.font as Any], context: nil)
-        
-        print(labelSize.width)
-        print(labelSize.height)
-        print(self.frame.width)
-        
         return Int(modf(labelSize.width / (self.frame.width / 2.0)).0) + 1
   }
+}
+
+extension UIImage{
+    
+    //构造可选Data构造器
+    convenience init?(_ data: Data?) {
+        if let unwappedData = data{
+            self.init(data: unwappedData)
+        }else{
+            return nil
+        }
+    }
+    
+    enum ImageQuality: CGFloat{
+        case low = 0.25
+        case medium = 0.5
+        case high = 0.75
+    }
+    
+    //获取压缩的jpeg
+    func getJpeg(_ imageQuality: ImageQuality) -> Data?{
+        jpegData(compressionQuality: imageQuality.rawValue)
+    }
+    
+}
+
+extension Date{
+    
+    //时间格式化
+    var formatterDate: String{
+        let currentYear = Date().year
+        
+        if year == currentYear {//今年
+            if isToday{
+                if minutesAgo > 60{
+                    return format(with: "今天HH:mm")
+                }else{
+                    return timeAgoSinceNow
+                }
+            }else if isYesterday{//昨天
+                return format(with: "昨天HH:mm")
+            }else{//前天及之前
+                return format(with: "MM-dd")
+            }
+        }else if year < currentYear{//往年
+            return format(with: "yyyy-MM-dd")
+        }else{
+            return "error time"
+        }
+    }
 }

@@ -70,11 +70,8 @@ class NearbyVC: UICollectionViewController {
     
         cell.avatarImage.image = UIImage(named: "5")
         
-        if testTitle[indexPath.item] == "" {
-            cell.titleLabel.isHidden = true
-        }else{
-            cell.titleLabel.text = testTitle[indexPath.item]
-        }
+        cell.titleLabel.isHidden = testTitle[indexPath.item] == ""
+        cell.titleLabel.text = testTitle[indexPath.item]
         
         cell.nicknameLabel.text = "🐔你太美"
         cell.distanceLabel.text = "11.4km"
@@ -131,7 +128,7 @@ extension NearbyVC: CHTCollectionViewDelegateWaterfallLayout{
         }
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kNearbyCellID, for: indexPath) as! NearbyCell
         var cellH = cellW * imageRato + cell.infoStack.bounds.height + 20
-        let lines = cell.titleLabel.textToThisLabelLines(text: testTitle[indexPath.item] as NSString)
+        let lines = cell.titleLabel.textToThisLabelLines(text: testTitle[indexPath.item])
             cellH += cell.titleLabel.bounds.height * CGFloat(lines - 1)
         if lines == 0{
             cellH -= cell.infoStack.spacing

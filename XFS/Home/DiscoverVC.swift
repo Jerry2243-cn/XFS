@@ -57,6 +57,7 @@ class DiscoverVC: ButtonBarPagerTabStripViewController, IndicatorInfoProvider {
         for channel in kChannels{
             let vc = storyboard!.instantiateViewController(identifier: kWaterFallVCID) as! WaterFallVC
             vc.channel = channel
+            vc.cellType = .discover
             vcs.append(vc)
         }
         return vcs

@@ -47,7 +47,7 @@ class TopicTableVC: UITableViewController, IndicatorInfoProvider {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let topicSelectVC =  parent as! TopicSelectVC
+        let topicSelectVC = parent as! TopicSelectVC
         topicSelectVC.PVDelegate?.updateTopic(channel: channel, topic: topics[indexPath.item])
         dismiss(animated: true)
     }

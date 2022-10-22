@@ -10,20 +10,21 @@ import AMapLocationKit
 
 class POIVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDelegate {
     
+    //MARK: 全局变量
     var POIDelegate: POIViewControllerDelegate?
-//    var poiName = ""
     lazy var selectedPOI = POI()
     lazy var myPOI = POI()
-    //布局组件outle
+    
+    //MARK: 布局组件outle
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableView: UITableView!
     
-    //取消按钮操作
+    //MARK: 取消按钮操作
     @IBAction func cancelButton(_ sender: Any) {
         dismiss(animated: true)
     }
     
-    //定位相关变量
+    //MARK: 定位相关变量
     let locationManager = AMapLocationManager()
     lazy var mapSearch = AMapSearchAPI()
     lazy var aroundSearchRequest: AMapPOIAroundSearchRequest = {
@@ -40,15 +41,16 @@ class POIVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDelegate {
         return request
     }()
     
-    //上拉加载分页
+    //MARK: 上拉加载分页
     lazy var footer = MJRefreshAutoNormalFooter()
     
-    //坐标及POI
+    //MARK: 坐标及POI
     var pois = [POI(name: "不显示位置")]
     var currentAroundPage = 1
     var isAllAroundPOILoad = false
     var currentKeywordPage = 1
 
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         hideKeyboardWhenTappedAround()
@@ -60,7 +62,7 @@ class POIVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDelegate {
   
     }
     
-    //高德SDK请求回调处理
+    //MARK: 高德SDK请求回调处理
     func onPOISearchDone(_ request: AMapPOISearchBaseRequest!, response: AMapPOISearchResponse!) {
         print("搜索了一次，页数\(request.page)，poi数量\(response.count)")
         hideHUD()
@@ -83,7 +85,7 @@ class POIVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDelegate {
         //解析response获取POI信息，具体解析见 Demo
     }
     
-    //高德地图相关配置
+    //MARK: 高德地图相关配置
     func locationAction(){
         showLoadHUD()
         
@@ -133,16 +135,17 @@ extension POIVC{
     
     func config(){
         
-        //定位信息配置
+        //MARK: 定位信息配置
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
         locationManager.locationTimeout = 5
         locationManager.reGeocodeTimeout = 5
         
-        //上拉加载
+        //MARK: 上拉加载
         tableView.mj_footer = footer
     }
     
+    //MARK: 监听上拉刷新事件
     @objc func footerRefreshAround(){
         if !isAllAroundPOILoad {
             currentAroundPage += 1
@@ -179,17 +182,17 @@ extension POIVC{
 }
 
 extension POIVC: UITableViewDelegate{
-    //反向传值给NoteEdititingVC
+    //MARK: 反向传值给NoteEdititingVC
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath)!
-        cell.accessoryType = .checkmark
+        cell.accessoryType = indexPath.item != 0 ? .checkmark : .none
         POIDelegate?.updateLocation(poi: pois[indexPath.item])
         dismiss(animated: true)
     }
     
 }
 
-//tableviews数据初始化
+//MARK: tableviews数据初始化
 extension POIVC:UITableViewDataSource{
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         pois.count
@@ -199,9 +202,7 @@ extension POIVC:UITableViewDataSource{
         let cell = tableView.dequeueReusableCell(withIdentifier: kPOICell, for: indexPath) as! POICell
         let poi = pois[indexPath.row]
         cell.poi = poi
-        cell.titleLabel.text = poi.name
-        cell.addressLabel.text = poi.address
-        cell.accessoryType = selectedPOI == poi ? .checkmark : .none
+        cell.accessoryType = (selectedPOI == poi && indexPath.item != 0) ? .checkmark : .none
         return cell
     }
     
@@ -210,7 +211,7 @@ extension POIVC:UITableViewDataSource{
 extension POIVC: UISearchBarDelegate{
     
    
-    //搜索结果处理
+    //MARK: 搜索结果处理
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         print(searchText)
         showLoadHUD()

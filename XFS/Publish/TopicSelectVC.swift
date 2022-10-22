@@ -14,7 +14,7 @@ class TopicSelectVC: ButtonBarPagerTabStripViewController {
 
     override func viewDidLoad() {
         self.settings.style.selectedBarHeight = 2
-        self.settings.style.selectedBarBackgroundColor = UIColor(named: "main_color")!
+        self.settings.style.selectedBarBackgroundColor = mainColor!
         
         self.settings.style.buttonBarBackgroundColor = .clear
         self.settings.style.buttonBarItemBackgroundColor = .clear

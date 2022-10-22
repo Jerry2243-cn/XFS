@@ -9,7 +9,12 @@ import UIKit
 
 class LocationTagCell: UICollectionViewCell {
     
-    var poi = POI()
+    var poi:POI?{
+        didSet{
+            guard let poi = poi else {return}
+            titleLabel.text = poi.name
+        }
+    }
     
     @IBOutlet weak var titleLabel: UILabel!
     

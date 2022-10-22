@@ -1,16 +1,23 @@
 PODS:
-  - AMapFoundation (1.7.0)
+  - Alamofire (5.6.2)
+  - AMapFoundation (1.8.0)
   - AMapLocation (2.9.0):
     - AMapFoundation (>= 1.7.0)
-  - AMapSearch (9.4.0):
-    - AMapFoundation (>= 1.7.0)
+  - AMapSearch (9.4.5):
+    - AMapFoundation (>= 1.8.0)
   - CHTCollectionViewWaterfallLayout (0.9.10):
     - CHTCollectionViewWaterfallLayout/Swift (= 0.9.10)
   - CHTCollectionViewWaterfallLayout/Swift (0.9.10)
+  - DateToolsSwift (5.0.0)
+  - FaveButton (3.2.1)
+  - ImageSlideshow (1.9.2):
+    - ImageSlideshow/Core (= 1.9.2)
+  - ImageSlideshow/Core (1.9.2)
   - KMPlaceholderTextView (1.4.0)
   - MBProgressHUD (1.2.0)
   - MJRefresh (3.7.5)
   - PryntTrimmerView (4.0.2)
+  - SegementSlide (3.0.1)
   - SKPhotoBrowser (7.1.0)
   - SteviaLayout (4.7.3)
   - XLPagerTabStrip (9.0.0)
@@ -19,45 +26,60 @@ PODS:
     - SteviaLayout (= 4.7.3)
 
 DEPENDENCIES:
+  - Alamofire
   - AMapLocation
   - AMapSearch
   - CHTCollectionViewWaterfallLayout
+  - DateToolsSwift
+  - FaveButton
+  - ImageSlideshow (~> 1.9.0)
   - KMPlaceholderTextView (~> 1.4.0)
   - MBProgressHUD (~> 1.2.0)
   - MJRefresh
+  - SegementSlide (= 3.0.1)
   - SKPhotoBrowser
-  - XLPagerTabStrip (~> 9.0)
+  - XLPagerTabStrip
   - YPImagePicker
 
 SPEC REPOS:
   trunk:
+    - Alamofire
     - AMapFoundation
     - AMapLocation
     - AMapSearch
     - CHTCollectionViewWaterfallLayout
+    - DateToolsSwift
+    - FaveButton
+    - ImageSlideshow
     - KMPlaceholderTextView
     - MBProgressHUD
     - MJRefresh
     - PryntTrimmerView
+    - SegementSlide
     - SKPhotoBrowser
     - SteviaLayout
     - XLPagerTabStrip
     - YPImagePicker
 
 SPEC CHECKSUMS:
-  AMapFoundation: c14fcebd8e4267c593bd2e25067ac86b0ce64aba
+  Alamofire: d368e1ff8a298e6dde360e35a3e68e6c610e7204
+  AMapFoundation: f48153f724114b58da9b01875ab88a1f6856e3db
   AMapLocation: f5eb11e11c62f0f599f80b578eec8a1f70deb985
-  AMapSearch: 8222912b82117557f3739132bb13fad8e2d19073
+  AMapSearch: 72e234d9dbdf021fe30b3079af55641e219711c1
   CHTCollectionViewWaterfallLayout: b989a459788d7657ac010e03bc0f7eedca95a420
+  DateToolsSwift: 4207ada6ad615d8dc076323d27037c94916dbfa6
+  FaveButton: 93cfebf6030336fa7653fad2068c3152ed668b39
+  ImageSlideshow: be305b54eaf2b2cfc7a7141c7c734605d44dc07d
   KMPlaceholderTextView: 2206c3df39979e9396e2d96fa9f427a8951121b0
   MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
   MJRefresh: fdf5e979eb406a0341468932d1dfc8b7f9fce961
   PryntTrimmerView: 6a43cc90df5d99addeabd33d4ba09b1365322130
+  SegementSlide: 83b56ffb66b9c0edc4e4f2a74229309c62915db3
   SKPhotoBrowser: cd95b95a6f352fc2a50992721299f75ead77f9ab
   SteviaLayout: c2ecdcff57d44e38fd2f65e54ad52aeae28ca0c4
   XLPagerTabStrip: 61c57fd61f611ee5f01ff1495ad6fbee8bf496c5
   YPImagePicker: f36043210c10b0783034eb1947d6e06e31c461e4
 
-PODFILE CHECKSUM: 29dcef3357e934c7846e903306130943290798db
+PODFILE CHECKSUM: 7ac6e9a49a2132060f592441f4ceaa4ca76e9119
 
 COCOAPODS: 1.11.3

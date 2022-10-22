@@ -10,9 +10,9 @@ import XLPagerTabStrip
 
 class HomeVC: ButtonBarPagerTabStripViewController, AMapLocationManagerDelegate{
     
+    lazy var myPOI = POI()
     let locationM = CLLocationManager()
     let locationManager = AMapLocationManager()
-    var location = "附近"
 
     @IBOutlet weak var searchBUtton: UIButton!
     override func viewDidLoad() {
@@ -100,15 +100,15 @@ class HomeVC: ButtonBarPagerTabStripViewController, AMapLocationManagerDelegate{
             }
             
             if let location = location {
-                print("location:" + location.description)
+                self.myPOI.latitude = location.coordinate.latitude
+                self.myPOI.longtitude = location.coordinate.longitude
             }
             
             if let reGeocode = reGeocode {
-                print("reGeocode:" + reGeocode.description)
                 let indexStart = reGeocode.city.startIndex
                 let index = reGeocode.city.index(indexStart, offsetBy: 2)
                 let fixed = String(reGeocode.city[indexStart..<index])
-                self.location = fixed
+                self.myPOI.city = fixed
                 
                 DispatchQueue.main.async {
                     self.reloadPagerTabStripView()
@@ -122,8 +122,11 @@ class HomeVC: ButtonBarPagerTabStripViewController, AMapLocationManagerDelegate{
     override func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
         let DiscoverVC = storyboard!.instantiateViewController(identifier: kDiscoverVCID)
         let FellowVC = storyboard!.instantiateViewController(identifier: kFellowVCID)
-        let NearbyVC = storyboard!.instantiateViewController(identifier: kNearbyVCID) as! NearbyVC
-        NearbyVC.location = location
+        let NearbyVC = storyboard!.instantiateViewController(identifier: kWaterFallVCID) as! WaterFallVC
+        NearbyVC.channel = myPOI.city == "" ? "附近" : myPOI.city
+        NearbyVC.cellType = .nearby
+        NearbyVC.myPOI = myPOI
+        
         return [DiscoverVC, FellowVC, NearbyVC]
     }
     
