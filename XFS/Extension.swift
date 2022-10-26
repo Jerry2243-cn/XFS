@@ -63,7 +63,7 @@ extension UIViewController{
 //加载Xib文件的View
 extension Bundle {
     static func loadView<T>(fromNIb name: String, with type: T.Type) -> T{
-        if let view =  Bundle.main.loadNibNamed(name, owner: nil)?.first as? T{
+        if let view = Bundle.main.loadNibNamed(name, owner: nil)?.first as? T{
             return view
         }
         fatalError("加载\(type)类型的View失败失败")
@@ -88,6 +88,15 @@ extension UILabel {
     let labelSize = myText.boundingRect(with: rect, options: .usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font: self.font as Any], context: nil)
         return Int(modf(labelSize.width / (self.frame.width / 2.0)).0) + 1
   }
+}
+
+extension UIButton{
+    //胶囊按钮
+    func makeCapsule(_ color:UIColor = .label){
+        layer.cornerRadius = frame.height / 2
+        layer.borderWidth = 1
+        layer.borderColor = color.cgColor
+    }
 }
 
 extension UIImage{

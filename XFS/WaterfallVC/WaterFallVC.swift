@@ -18,6 +18,13 @@ class WaterFallVC: UICollectionViewController, SegementSlideContentScrollViewDel
             return collectionView
         }
     
+    @IBAction func goBack(_ sender: Any) {
+        dismiss(animated: true)
+    }
+    
+    
+    var popOpt: (()->())?
+    
     lazy var myPOI = POI()
     var channel = ""
     var cellType: WaterfallCellType = .draftNote
@@ -308,12 +315,16 @@ extension WaterFallVC{
     
     func discoverNoteCellTap(_ collectionView: UICollectionView,_ indexPath: IndexPath){
         let detaiNoteVC = storyboard!.instantiateViewController(withIdentifier: kNoteDetailVCID) as! NoteDetailVC
+        detaiNoteVC.coverImage = UIImage(named: "\(indexPath.item + 1)")!
         detaiNoteVC.modalPresentationStyle = .fullScreen
         present(detaiNoteVC, animated: true)
     }
     
     func nearbyNoteCellTap(_ collectionView: UICollectionView,_ indexPath: IndexPath){
-       
+        let detaiNoteVC = storyboard!.instantiateViewController(withIdentifier: kNoteDetailVCID) as! NoteDetailVC
+        detaiNoteVC.coverImage = UIImage(named: "\(indexPath.item + 1)")!
+        detaiNoteVC.modalPresentationStyle = .fullScreen
+        present(detaiNoteVC, animated: true)
     }
     
     func draftNoteCellTap(_ collectionView: UICollectionView,_ indexPath: IndexPath){
@@ -334,6 +345,7 @@ extension WaterFallVC{
                 self.showTextHUD(showView: self.view, "笔记发布test")
             }
             navigationController?.pushViewController(vc, animated: true)
+            
         }else{
             showTextHUD(showView: view, "加载草稿失败")
         }

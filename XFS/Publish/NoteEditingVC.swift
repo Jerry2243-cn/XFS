@@ -203,7 +203,7 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
     }
     
     func loadDraftNoteData(){
-        if let note = draftNote{
+        guard let note = draftNote else { return }
             titleTextField.text = note.title
             contentTextView.text = note.content
             if note.topic != ""{
@@ -213,7 +213,6 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
                 let poi = POI(name: note.poiName!,address: note.poiAddress!,latitude: note.latitude, longtitude: note.longtitude)
                 updateLocation(poi: poi)
             }
-        }
     }
     
     //MARK: 高德地图相关配置及获取坐标

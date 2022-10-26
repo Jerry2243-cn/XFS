@@ -10,12 +10,19 @@ import Alamofire
 import SegementSlide
 
 class MeVC: SegementSlideDefaultViewController {
+    
+    @objc func go(){
+        let vc = storyboard!.instantiateViewController(withIdentifier: "naviDraftNote") as! UINavigationController
+        vc.modalPresentationStyle = .fullScreen
+        present(vc, animated: true)
+        
+    }
 
     override func segementSlideHeaderView() -> UIView? {
-           let headerView = UIView()
+        let headerView = Bundle.loadView(fromNIb: "MeHeaderView", with: MeHeaderView.self)
+        headerView.shareBUtton.addTarget(self, action: #selector(go), for: .touchUpInside)
            headerView.translatesAutoresizingMaskIntoConstraints = false
-        headerView.backgroundColor = mainColor
-           headerView.heightAnchor.constraint(equalToConstant: view.bounds.height/4).isActive = true
+        headerView.heightAnchor.constraint(equalToConstant: headerView.rootStackView.frame.height + 16  ).isActive = true
            return headerView
        }
 
@@ -40,6 +47,10 @@ class MeVC: SegementSlideDefaultViewController {
        override func viewDidLoad() {
            super.viewDidLoad()
            
+
+           let statusBarOverlayView =  UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: statusBarH))
+           statusBarOverlayView.backgroundColor = .systemBackground
+           view.addSubview(statusBarOverlayView)
            scrollView.backgroundColor = .systemBackground
            contentView.backgroundColor = .systemBackground
            switcherView.backgroundColor = .systemBackground

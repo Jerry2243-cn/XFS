@@ -11,6 +11,7 @@ import Alamofire
 
 class NoteDetailVC: UIViewController {
 
+    var coverImage = UIImage(named: "1")!
     
     @IBOutlet weak var backeButton: UIButton!
     @IBOutlet weak var avatarButton: UIButton!
@@ -26,17 +27,18 @@ class NoteDetailVC: UIViewController {
         dismiss(animated: true)
     }
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setUI()
         config()
         photosShow.setImageInputs([
-            ImageSource(image: UIImage(named: "1")!),
+            ImageSource(image: coverImage),
             ImageSource(image: UIImage(named: "2")!),
             ImageSource(image: UIImage(named: "3")!)
         ])
 
-        let size = UIImage(named: "1")!.size
+        let size = coverImage.size
         let h = size.height
         let w = size.width
         let width = UIScreen.main.bounds.width

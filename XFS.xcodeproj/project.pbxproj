@@ -15,6 +15,10 @@
 		97316BC228ED65C000E65540 /* PhotoFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97316BC128ED65C000E65540 /* PhotoFooter.swift */; };
 		9733D9EE2904368F0058D30F /* MeHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9733D9ED2904368F0058D30F /* MeHeaderView.swift */; };
 		9733D9F0290436A10058D30F /* MeHeaderView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9733D9EF290436A10058D30F /* MeHeaderView.xib */; };
+		9733D9F32904BCFB0058D30F /* MessageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9733D9F22904BCFB0058D30F /* MessageVC.swift */; };
+		9733D9F52904C08C0058D30F /* NvaigatedVVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9733D9F42904C08C0058D30F /* NvaigatedVVC.swift */; };
+		9733D9F72904D0F20058D30F /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9733D9F62904D0F20058D30F /* MessageCell.swift */; };
+		9733D9F92904D2430058D30F /* NotficationLIstVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9733D9F82904D2430058D30F /* NotficationLIstVC.swift */; };
 		975552FA28F88F6B003D3917 /* VO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 975552F928F88F6B003D3917 /* VO.swift */; };
 		975552FC28F8D57E003D3917 /* POICell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 975552FB28F8D57E003D3917 /* POICell.swift */; };
 		97607B4328ED19630070D4FE /* NoteEditingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97607B4228ED19630070D4FE /* NoteEditingVC.swift */; };
@@ -60,6 +64,10 @@
 		97316BC328EE796200E65540 /* OC-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OC-Header.h"; sourceTree = "<group>"; };
 		9733D9ED2904368F0058D30F /* MeHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeHeaderView.swift; sourceTree = "<group>"; };
 		9733D9EF290436A10058D30F /* MeHeaderView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MeHeaderView.xib; sourceTree = "<group>"; };
+		9733D9F22904BCFB0058D30F /* MessageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageVC.swift; sourceTree = "<group>"; };
+		9733D9F42904C08C0058D30F /* NvaigatedVVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NvaigatedVVC.swift; sourceTree = "<group>"; };
+		9733D9F62904D0F20058D30F /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
+		9733D9F82904D2430058D30F /* NotficationLIstVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotficationLIstVC.swift; sourceTree = "<group>"; };
 		975552F928F88F6B003D3917 /* VO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VO.swift; sourceTree = "<group>"; };
 		975552FB28F8D57E003D3917 /* POICell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = POICell.swift; sourceTree = "<group>"; };
 		97607B4228ED19630070D4FE /* NoteEditingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteEditingVC.swift; sourceTree = "<group>"; };
@@ -117,6 +125,16 @@
 			path = WaterfallVC;
 			sourceTree = "<group>";
 		};
+		9733D9F12904BCE10058D30F /* Message */ = {
+			isa = PBXGroup;
+			children = (
+				9733D9F22904BCFB0058D30F /* MessageVC.swift */,
+				9733D9F62904D0F20058D30F /* MessageCell.swift */,
+				9733D9F82904D2430058D30F /* NotficationLIstVC.swift */,
+			);
+			path = Message;
+			sourceTree = "<group>";
+		};
 		97607B4428ED198C0070D4FE /* Publish */ = {
 			isa = PBXGroup;
 			children = (
@@ -157,6 +175,7 @@
 		9792CC0928E7E7AF00C9D040 /* XFS */ = {
 			isa = PBXGroup;
 			children = (
+				9733D9F12904BCE10058D30F /* Message */,
 				97DC9FF428FF0FE9000FED17 /* NoteDetail */,
 				97607B4428ED198C0070D4FE /* Publish */,
 				970774DE28EA342C001F7B4A /* WaterfallVC */,
@@ -175,6 +194,7 @@
 				9792CC1328E7E7AF00C9D040 /* XFS.xcdatamodeld */,
 				97316BC328EE796200E65540 /* OC-Header.h */,
 				97DAF9CB28FF316800F90EBB /* CustomViews.swift */,
+				9733D9F42904C08C0058D30F /* NvaigatedVVC.swift */,
 			);
 			path = XFS;
 			sourceTree = "<group>";
@@ -352,6 +372,7 @@
 				9733D9EE2904368F0058D30F /* MeHeaderView.swift in Sources */,
 				97CFC98C28F314CF0033358E /* Protocols.swift in Sources */,
 				970774E028EABE06001F7B4A /* TabBarController.swift in Sources */,
+				9733D9F72904D0F20058D30F /* MessageCell.swift in Sources */,
 				97DC9FF628FF100D000FED17 /* NoteDetailVC.swift in Sources */,
 				9792CC1528E7E7AF00C9D040 /* XFS.xcdatamodeld in Sources */,
 				97607B4628ED272D0070D4FE /* PhotoCell.swift in Sources */,
@@ -359,12 +380,14 @@
 				975552FC28F8D57E003D3917 /* POICell.swift in Sources */,
 				97CFC99628F5F9640033358E /* LocationTagCell.swift in Sources */,
 				97E4917F28FC5A5600957F0D /* DraftNoteWaterfallICell.swift in Sources */,
+				9733D9F52904C08C0058D30F /* NvaigatedVVC.swift in Sources */,
 				970FDC0C28F7115800D83D34 /* SearchVC.swift in Sources */,
 				97607B4328ED19630070D4FE /* NoteEditingVC.swift in Sources */,
 				9792CC0B28E7E7AF00C9D040 /* AppDelegate.swift in Sources */,
 				97A13C3828EAF19A005D99AC /* NearbyCell.swift in Sources */,
 				97A13C3E28EB0745005D99AC /* FellowCell.swift in Sources */,
 				9792CC0D28E7E7AF00C9D040 /* SceneDelegate.swift in Sources */,
+				9733D9F92904D2430058D30F /* NotficationLIstVC.swift in Sources */,
 				97316BBE28ED4B8C00E65540 /* Extension.swift in Sources */,
 				97316BC228ED65C000E65540 /* PhotoFooter.swift in Sources */,
 				97F21E2328E8D30800A23084 /* DiscoverVC.swift in Sources */,
@@ -377,6 +400,7 @@
 				97CFC99028F44E270033358E /* POIVC.swift in Sources */,
 				970774E228EAC029001F7B4A /* PublishVC.swift in Sources */,
 				97F21E2A28E8DE0B00A23084 /* Constants.swift in Sources */,
+				9733D9F32904BCFB0058D30F /* MessageVC.swift in Sources */,
 				97A13C3628EAF028005D99AC /* NearbyVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

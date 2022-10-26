@@ -20,10 +20,10 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
 
         let tabBarItemApperance = UITabBarItemAppearance()
         
-        tabBarItemApperance.normal.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: -13)
-        tabBarItemApperance.selected.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: -13)
+        tabBarItemApperance.normal.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: -14)
+        tabBarItemApperance.selected.titlePositionAdjustment = UIOffset(horizontal: 0, vertical: -14)
         tabBarItemApperance.normal.titleTextAttributes = [
-            NSAttributedString.Key.font : UIFont.systemFont(ofSize: 18, weight: .light)
+            NSAttributedString.Key.font : UIFont.systemFont(ofSize: 18, weight: .medium)
         ]
         
         tabBarItemApperance.selected.titleTextAttributes = [
@@ -47,7 +47,7 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
             config.usesFrontCamera = true
             config.albumName = "小粉书"
             config.startOnScreen = YPPickerScreen.library
-            config.screens = [.library, .photo, .video]
+            config.screens = [.library, .photo]
 //            config.overlayView = UIView()
 
             config.maxCameraZoomFactor = 5.0
@@ -93,7 +93,6 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
             
             return false
         }
-        
         
         return true
     }

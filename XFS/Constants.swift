@@ -17,6 +17,8 @@ let kNoteEditingVC = "noteEditingVCID"
 let kTopicTableVCID = "topicTableVCID"
 let kNoteDetailVCID = "noteDetailVCID"
 let kDraftNoteNaviVCID = "draftNoteNaviVCID"
+let kMessageVCID = "messageVCID"
+let kNotficationLIstVC = "notficationLIstVC"
 
 // MARK: CellID
 let kWaterFallCellID = "waterFallCellID"
@@ -28,6 +30,7 @@ let kTopicCellID = "topicCellID"
 let kPOICell = "POICellID"
 let kLocationTagCellID = "locationTagCellID"
 let kDraftNoteWaterfallID = "draftNoteWaterfallID"
+let kMessageCellID = "messageCellID"
 
 let kWaterFallpadding:CGFloat = 5
 let kMaxPhotoCount = 9
