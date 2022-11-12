@@ -145,11 +145,15 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
         saveNoteOptions?()
     }
     
-    
+//    @objc func toppicDidUpdate(noti: Notification) {
+//        print(noti.object)
+//    }
+//
     // MARK: viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+//        
+//        NotificationCenter.default.addObserver(self, selector: #selector(toppicDidUpdate(noti:)), name: .init("updateTopic"), object: nil)
         loadDraftNoteData()
         //定位相关
         locationConfig()
@@ -185,9 +189,14 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
     }
     
     func postNote(){
+        
+        guard let uploadedPhotos = FileHelper.uploadImages(images: photos) else {return}
+        
         let postData = Note(
             title : titleTextField.text ?? "",
             content : contentTextView.text ?? "",
+            coverPhoto: uploadedPhotos[0].url,
+            photos: uploadedPhotos,
             poi : selectedPOI,
             user: User(),
             topic: Topic(name: topic)

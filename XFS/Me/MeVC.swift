@@ -17,10 +17,17 @@ class MeVC: SegementSlideDefaultViewController {
         present(vc, animated: true)
         
     }
+    
+    @objc func settingOrChatBtnAct(){
+        let nav = UINavigationController(rootViewController: SettingsVC())
+//        nav.modalPresentationStyle = .fullScreen;
+        self.present(nav, animated: true)
+    }
 
     override func segementSlideHeaderView() -> UIView? {
         let headerView = Bundle.loadView(fromNIb: "MeHeaderView", with: MeHeaderView.self)
         headerView.shareBUtton.addTarget(self, action: #selector(go), for: .touchUpInside)
+        headerView.settingsOrChatButton.addTarget(self, action: #selector(settingOrChatBtnAct), for: .touchUpInside)
            headerView.translatesAutoresizingMaskIntoConstraints = false
         headerView.heightAnchor.constraint(equalToConstant: headerView.rootStackView.frame.height + 16  ).isActive = true
            return headerView

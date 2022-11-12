@@ -11,6 +11,7 @@ import XLPagerTabStrip
 import CoreData
 import MJRefresh
 import SegementSlide
+import Hero
 
 class WaterFallVC: UICollectionViewController, SegementSlideContentScrollViewDelegate{
     
@@ -268,7 +269,7 @@ extension WaterFallVC{
         cell.titleLabel.text = testTitle[indexPath.item]
         cell.nicknameLabel.text = "🐔你太美"
         cell.likeButton.setTitle("11.4万", for: .normal)
-        
+        cell.hero.id = "cover\(indexPath.item)"
         return cell
     }
     
@@ -281,7 +282,7 @@ extension WaterFallVC{
         cell.titleLabel.text = testTitle[indexPath.item]
         cell.nicknameLabel.text = "🐔你太美"
         cell.distanceLabel.text = "11.4km"
-        
+        cell.hero.id = "cover\(indexPath.item)"
         return cell
     }
 }
@@ -317,6 +318,7 @@ extension WaterFallVC{
         let detaiNoteVC = storyboard!.instantiateViewController(withIdentifier: kNoteDetailVCID) as! NoteDetailVC
         detaiNoteVC.coverImage = UIImage(named: "\(indexPath.item + 1)")!
         detaiNoteVC.modalPresentationStyle = .fullScreen
+        detaiNoteVC.noteDetalHeroID = "cover\(indexPath.item)"
         present(detaiNoteVC, animated: true)
     }
     
@@ -324,6 +326,8 @@ extension WaterFallVC{
         let detaiNoteVC = storyboard!.instantiateViewController(withIdentifier: kNoteDetailVCID) as! NoteDetailVC
         detaiNoteVC.coverImage = UIImage(named: "\(indexPath.item + 1)")!
         detaiNoteVC.modalPresentationStyle = .fullScreen
+        detaiNoteVC.noteDetalHeroID = "cover\(indexPath.item)"
+
         present(detaiNoteVC, animated: true)
     }
     

@@ -20,4 +20,7 @@ target 'XFS' do
     pod 'ImageSlideshow', '~> 1.9.0'
     pod 'Alamofire'
     pod 'SegementSlide', '3.0.1'
+    pod 'SnapKit'
+    pod 'Hero'
+    pod 'AliyunOSSiOS'
 end

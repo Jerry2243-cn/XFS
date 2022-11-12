@@ -16,8 +16,8 @@ struct Note: Codable{
     var poi = POI()
     var user = User()
     var topic = Topic()
-    var createTime = Date()
-    var updateTime = Date()
+    var createTime = ""
+    var updateTime = ""
     var likeNumber = 0
     var starNumber = 0
     var commentNumber = 0
@@ -30,7 +30,9 @@ struct Photo: Codable{
 }
 
 struct User: Codable{
-    var id = 1
+    var id = -1
+    var username = ""
+    var password = ""
 }
 
 struct Topic: Codable{

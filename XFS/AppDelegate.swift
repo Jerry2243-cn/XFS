@@ -7,14 +7,20 @@
 
 import UIKit
 import CoreData
+import Alamofire
+import AliyunOSSiOS
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    
+    var client:OSSClient?
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         config()
+        loginTest()
+        initAliyunOSS()
         return true
     }
 
@@ -90,5 +96,29 @@ extension AppDelegate{
         AMapSearchAPI.updatePrivacyShow(.didShow, privacyInfo: .didContain)
         
         UINavigationBar.appearance().tintColor = .label
+    }
+    
+    func loginTest(){
+        let postData = [
+            "username" : "xfs0001",
+            "password" : "123456"
+        ]
+        AF.request(
+            "http://127.0.0.1:8080/login",
+            method: .post,
+            parameters: postData,
+            encoder: JSONParameterEncoder.default
+        ).response{res in
+            debugPrint(res)
+        }
+    }
+    
+    func initAliyunOSS(){
+         
+        let credentialProvider = OSSPlainTextAKSKPairCredentialProvider(plainTextAccessKey: "LTAI5tQhJH4RRxJCHmNWHEP3", secretKey: "VUnw0Cq8vwtAypSZJT6CyDDKuy0IOD")
+
+        client = OSSClient(endpoint: "oss-cn-hangzhou.aliyuncs.com", credentialProvider: credentialProvider)
+       
+        
     }
 }

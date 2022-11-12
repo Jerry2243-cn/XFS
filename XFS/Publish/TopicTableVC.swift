@@ -48,8 +48,13 @@ class TopicTableVC: UITableViewController, IndicatorInfoProvider {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let topicSelectVC = parent as! TopicSelectVC
+//        NotificationCenter.default.post(name: .updateTopic, object: ["title": "test"])
         topicSelectVC.PVDelegate?.updateTopic(channel: channel, topic: topics[indexPath.item])
         dismiss(animated: true)
     }
 
 }
+
+//extension Notification.Name {
+//    static let updateTopic = Notification.Name.init("updateTopic")
+//}

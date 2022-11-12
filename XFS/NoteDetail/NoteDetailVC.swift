@@ -8,10 +8,12 @@
 import UIKit
 import ImageSlideshow
 import Alamofire
+import Hero
 
 class NoteDetailVC: UIViewController {
 
     var coverImage = UIImage(named: "1")!
+    var noteDetalHeroID:String?
     
     @IBOutlet weak var backeButton: UIButton!
     @IBOutlet weak var avatarButton: UIButton!
@@ -37,7 +39,11 @@ class NoteDetailVC: UIViewController {
             ImageSource(image: UIImage(named: "2")!),
             ImageSource(image: UIImage(named: "3")!)
         ])
+        
+        view.hero.id = noteDetalHeroID
+//        photosShow.hero.id = "imageCover"
 
+        
         let size = coverImage.size
         let h = size.height
         let w = size.width
@@ -67,6 +73,7 @@ class NoteDetailVC: UIViewController {
     }
     
     func config(){
+        self.hero.isEnabled = true
         photosShow.zoomEnabled = true
         photosShow.circular = false
         photosShow.contentScaleMode = .scaleAspectFit

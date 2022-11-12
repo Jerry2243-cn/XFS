@@ -10,6 +10,7 @@
 		66E689DCCD3757E590047A81 /* Pods_XFS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 67CC2BB63274ED75C1050185 /* Pods_XFS.framework */; };
 		970774E028EABE06001F7B4A /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970774DF28EABE06001F7B4A /* TabBarController.swift */; };
 		970774E228EAC029001F7B4A /* PublishVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970774E128EAC029001F7B4A /* PublishVC.swift */; };
+		970AB924291CE9E400EF5A79 /* FileHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970AB923291CE9E400EF5A79 /* FileHelper.swift */; };
 		970FDC0C28F7115800D83D34 /* SearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970FDC0B28F7115800D83D34 /* SearchVC.swift */; };
 		97316BBE28ED4B8C00E65540 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97316BBD28ED4B8C00E65540 /* Extension.swift */; };
 		97316BC228ED65C000E65540 /* PhotoFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97316BC128ED65C000E65540 /* PhotoFooter.swift */; };
@@ -19,6 +20,8 @@
 		9733D9F52904C08C0058D30F /* NvaigatedVVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9733D9F42904C08C0058D30F /* NvaigatedVVC.swift */; };
 		9733D9F72904D0F20058D30F /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9733D9F62904D0F20058D30F /* MessageCell.swift */; };
 		9733D9F92904D2430058D30F /* NotficationLIstVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9733D9F82904D2430058D30F /* NotficationLIstVC.swift */; };
+		973432FD2915348B005196A4 /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 973432FC2915348B005196A4 /* SettingsVC.swift */; };
+		973432FF29153B70005196A4 /* SettingsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 973432FE29153B70005196A4 /* SettingsCell.swift */; };
 		975552FA28F88F6B003D3917 /* VO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 975552F928F88F6B003D3917 /* VO.swift */; };
 		975552FC28F8D57E003D3917 /* POICell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 975552FB28F8D57E003D3917 /* POICell.swift */; };
 		97607B4328ED19630070D4FE /* NoteEditingVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97607B4228ED19630070D4FE /* NoteEditingVC.swift */; };
@@ -58,6 +61,7 @@
 		970774E128EAC029001F7B4A /* PublishVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublishVC.swift; sourceTree = "<group>"; };
 		970774E328EAC6EF001F7B4A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Main.strings"; sourceTree = "<group>"; };
 		970774E428EAC6EF001F7B4A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
+		970AB923291CE9E400EF5A79 /* FileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileHelper.swift; sourceTree = "<group>"; };
 		970FDC0B28F7115800D83D34 /* SearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SearchVC.swift; path = XFS/SearchVC.swift; sourceTree = SOURCE_ROOT; };
 		97316BBD28ED4B8C00E65540 /* Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		97316BC128ED65C000E65540 /* PhotoFooter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoFooter.swift; sourceTree = "<group>"; };
@@ -68,6 +72,8 @@
 		9733D9F42904C08C0058D30F /* NvaigatedVVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NvaigatedVVC.swift; sourceTree = "<group>"; };
 		9733D9F62904D0F20058D30F /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
 		9733D9F82904D2430058D30F /* NotficationLIstVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotficationLIstVC.swift; sourceTree = "<group>"; };
+		973432FC2915348B005196A4 /* SettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
+		973432FE29153B70005196A4 /* SettingsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsCell.swift; sourceTree = "<group>"; };
 		975552F928F88F6B003D3917 /* VO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VO.swift; sourceTree = "<group>"; };
 		975552FB28F8D57E003D3917 /* POICell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = POICell.swift; sourceTree = "<group>"; };
 		97607B4228ED19630070D4FE /* NoteEditingVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteEditingVC.swift; sourceTree = "<group>"; };
@@ -125,6 +131,14 @@
 			path = WaterfallVC;
 			sourceTree = "<group>";
 		};
+		970AB922291CE99500EF5A79 /* Tool */ = {
+			isa = PBXGroup;
+			children = (
+				970AB923291CE9E400EF5A79 /* FileHelper.swift */,
+			);
+			path = Tool;
+			sourceTree = "<group>";
+		};
 		9733D9F12904BCE10058D30F /* Message */ = {
 			isa = PBXGroup;
 			children = (
@@ -175,6 +189,7 @@
 		9792CC0928E7E7AF00C9D040 /* XFS */ = {
 			isa = PBXGroup;
 			children = (
+				970AB922291CE99500EF5A79 /* Tool */,
 				9733D9F12904BCE10058D30F /* Message */,
 				97DC9FF428FF0FE9000FED17 /* NoteDetail */,
 				97607B4428ED198C0070D4FE /* Publish */,
@@ -205,6 +220,8 @@
 				97DC9FEF28FE0C41000FED17 /* MeVC.swift */,
 				9733D9ED2904368F0058D30F /* MeHeaderView.swift */,
 				9733D9EF290436A10058D30F /* MeHeaderView.xib */,
+				973432FC2915348B005196A4 /* SettingsVC.swift */,
+				973432FE29153B70005196A4 /* SettingsCell.swift */,
 			);
 			path = Me;
 			sourceTree = "<group>";
@@ -382,10 +399,13 @@
 				97E4917F28FC5A5600957F0D /* DraftNoteWaterfallICell.swift in Sources */,
 				9733D9F52904C08C0058D30F /* NvaigatedVVC.swift in Sources */,
 				970FDC0C28F7115800D83D34 /* SearchVC.swift in Sources */,
+				973432FF29153B70005196A4 /* SettingsCell.swift in Sources */,
+				970AB924291CE9E400EF5A79 /* FileHelper.swift in Sources */,
 				97607B4328ED19630070D4FE /* NoteEditingVC.swift in Sources */,
 				9792CC0B28E7E7AF00C9D040 /* AppDelegate.swift in Sources */,
 				97A13C3828EAF19A005D99AC /* NearbyCell.swift in Sources */,
 				97A13C3E28EB0745005D99AC /* FellowCell.swift in Sources */,
+				973432FD2915348B005196A4 /* SettingsVC.swift in Sources */,
 				9792CC0D28E7E7AF00C9D040 /* SceneDelegate.swift in Sources */,
 				9733D9F92904D2430058D30F /* NotficationLIstVC.swift in Sources */,
 				97316BBE28ED4B8C00E65540 /* Extension.swift in Sources */,
@@ -552,6 +572,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = MPV859CKBH;
@@ -559,6 +580,11 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = XFS/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "小粉书";
+				INFOPLIST_KEY_NSCameraUsageDescription = "需要使用您的相机来拍摄图片或视频";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "记录笔记位置需要访问您的定位权限";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要使用您的麦克风来录制声音";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "需要使用您的相机来拍摄图片或视频";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "需要使用您的相册发布图片或视频";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -574,6 +600,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jerry.xfs.XFS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -590,6 +617,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = MPV859CKBH;
@@ -597,6 +625,11 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = XFS/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "小粉书";
+				INFOPLIST_KEY_NSCameraUsageDescription = "需要使用您的相机来拍摄图片或视频";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "记录笔记位置需要访问您的定位权限";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "需要使用您的麦克风来录制声音";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "需要使用您的相机来拍摄图片或视频";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "需要使用您的相册发布图片或视频";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -612,6 +645,7 @@
 				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jerry.xfs.XFS;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
