@@ -14,13 +14,27 @@ import AliyunOSSiOS
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var client:OSSClient?
+    
+    var user: User?
 
+    var server = Server.shared()
+    
+    var myPOI:POI?
+    
+    var channels:[String]?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        if server.token == ""{
+            let nav = UINavigationController(rootViewController: LoginVC())
+            UIApplication.shared.windows.first?.rootViewController = nav
+        }
+        
         config()
         loginTest()
         initAliyunOSS()
+        
         return true
     }
 
@@ -99,18 +113,29 @@ extension AppDelegate{
     }
     
     func loginTest(){
-        let postData = [
-            "username" : "xfs0001",
-            "password" : "123456"
-        ]
-        AF.request(
-            "http://127.0.0.1:8080/login",
-            method: .post,
-            parameters: postData,
-            encoder: JSONParameterEncoder.default
-        ).response{res in
-            debugPrint(res)
+        let lastDate = UserDefaults.standard.object(forKey: userDefaultslastOpenTime) as? Date
+        if let date = lastDate{
+            if !date.isToday{
+                server.login{res in
+                    if let resoult = res{
+                        if resoult == "token无效"{
+                            self.server.token = ""
+                        }
+                    }else{
+                        self.server.token = ""
+                    }
+                }
+            }
         }
+        UserDefaults.standard.set(Date(), forKey: userDefaultslastOpenTime)
+        if server.token != "" {
+            server.fetchUser { res in
+                 if let user = res {
+                     self.user = user
+                 }
+             }
+        }
+        print("checkToken:\(server.token)")
     }
     
     func initAliyunOSS(){

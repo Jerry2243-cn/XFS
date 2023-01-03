@@ -9,8 +9,13 @@ import UIKit
 import XLPagerTabStrip
 
 class DiscoverVC: ButtonBarPagerTabStripViewController, IndicatorInfoProvider {
+    
+    var channels = kChannels
 
     override func viewDidLoad() {
+        showLoadHUD()
+           
+        
         
         self.settings.style.selectedBarHeight = 0
         
@@ -21,7 +26,7 @@ class DiscoverVC: ButtonBarPagerTabStripViewController, IndicatorInfoProvider {
         
         super.viewDidLoad()
 
-        containerView.bounces = false
+         
         changeCurrentIndexProgressive = { (oldCell: ButtonBarViewCell?, newCell: ButtonBarViewCell?, progressPercentage: CGFloat, changeCurrentIndex: Bool, animated: Bool) -> Void in
             guard changeCurrentIndex == true else { return }
 
@@ -42,6 +47,17 @@ class DiscoverVC: ButtonBarPagerTabStripViewController, IndicatorInfoProvider {
             }
         }
         // Do any additional setup after loading the view.
+            Server.shared().fetchChannelsfromServer { res in
+                if let channels = res {
+                    if channels.count != 0 {
+                        self.channels = channels
+                        debugPrint(self.channels)
+                    }
+                }
+                    self.reloadPagerTabStripView()
+                
+                self.hideHUD()
+        }
     }
 
 
@@ -53,8 +69,7 @@ class DiscoverVC: ButtonBarPagerTabStripViewController, IndicatorInfoProvider {
     override func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
         
         var vcs:[UIViewController] = []
-        
-        for channel in kChannels{
+        for channel in channels{
             let vc = storyboard!.instantiateViewController(identifier: kWaterFallVCID) as! WaterFallVC
             vc.channel = channel
             vc.cellType = .discover

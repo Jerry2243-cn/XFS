@@ -10,17 +10,18 @@ import AliyunOSSiOS
 
 class FileHelper{
     
-    static func uploadImages(images:[UIImage]) -> [Photo]?{
+    static func uploadImages(images:[UIImage],completion:(_:[Photo]?)->()){
         var photos:[Photo] = []
         for i in 0 ..< images.count{
             if let uploadedName = uploadImage(image: images[i]){
                 let photo = Photo(url:uploadedName,orderNumber: i)
                 photos.append(photo)
             }else{
-                return nil
+                completion(nil)
+                return;
             }
         }
-        return photos
+        completion(photos)
     }
     
     
@@ -45,7 +46,7 @@ class FileHelper{
         })
         
         putTask?.waitUntilFinished()
-        return succeed ? name : nil
+        return succeed ? imageServerURL+name : nil
     }
     
     static func getRemoteImage(name:String) -> UIImage{

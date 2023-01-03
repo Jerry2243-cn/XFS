@@ -33,10 +33,17 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         tabBarApperance.stackedLayoutAppearance = tabBarItemApperance
         
         tabBar.standardAppearance = tabBarApperance
-
+        
     }
     
-   
+    override func viewDidAppear(_ animated: Bool) {
+        if Server.shared().token == ""{
+            let vc = LoginVC()
+            let nav = UINavigationController(rootViewController: vc)
+            nav.modalPresentationStyle = .fullScreen
+            present(nav, animated: true)
+        }
+    }
     
     func tabBarController(_ tabBarController: UITabBarController, shouldSelect viewController: UIViewController) -> Bool {
         if viewController is PublishVC {
@@ -85,7 +92,7 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
                     self.showTextHUD(showView: self.view, "笔记保存成功")
                 }
                 vc.publishNoteOptions = {
-                    self.showTextHUD(showView: self.view, "发布按钮测试")
+                    self.showTextHUD(showView: self.view, "笔记发布成功")
                 }
                 picker.pushViewController(vc, animated: true)
             }

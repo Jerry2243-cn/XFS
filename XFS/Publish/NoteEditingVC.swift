@@ -14,6 +14,8 @@ import Alamofire
 
 class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDelegate{
     
+    var note:Note?
+    
     var photos: [UIImage] = [
         UIImage(named: "1")!, UIImage(named: "2")!
     ]
@@ -34,8 +36,8 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
     }
     
     // MARK: 坐标及POI信息
-    lazy var myPOI = POI()
-    lazy var selectedPOI = POI()
+    lazy var myPOI = appDelegate.myPOI
+    var selectedPOI:POI?
     lazy var locations: [POI] = []
     //询问地图权限
 //    let locationManagerM = CLLocationManager()
@@ -46,7 +48,9 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
     lazy var aroundSearchRequest: AMapPOIAroundSearchRequest = {
         let request = AMapPOIAroundSearchRequest()
         request.types = kPOITypes
-        request.location = AMapGeoPoint.location(withLatitude: CGFloat(myPOI.latitude), longitude: CGFloat(myPOI.longtitude))
+        if let poi = self.myPOI{
+            request.location = AMapGeoPoint.location(withLatitude: CGFloat(poi.latitude), longitude: CGFloat(poi.longitude))
+        }
         return request
     }()
     
@@ -92,6 +96,7 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
         }
     }
     @IBAction func claerTopicAction(_ sender: Any) {
+        topic = ""
         topicImage.tintColor = .secondaryLabel
         topicLabel.text = "参与话题"
         topicLabel.textColor = .secondaryLabel
@@ -100,13 +105,20 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
     
     //MARK: 发布与草稿按钮Action
     @IBAction func publishButton(_ sender: Any) {
-        if let _ = self.draftNote{
-            navigationController?.popViewController(animated: true)
-        }else{
-            postNote()
-            dismiss(animated: true)
+        showLoadHUD()
+        postNote(){ res in
+            if res == "笔记上传成功"{
+                if let _ = self.draftNote{
+                    self.navigationController?.popViewController(animated: true)
+                }else{
+                    self.dismiss(animated: true)
+                }
+                self.publishNoteOptions?()
+            }else{
+                self.showTextHUD(showView: self.view, "上传失败")
+            }
         }
-        publishNoteOptions?()
+        
     }
     
     @IBAction func saveButton(_ sender: Any) {
@@ -125,13 +137,16 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
                 photos.append(pngData)
             }
         }
+        if let note = self.note{
+            draftNote.id = Int16(note.id)
+        }
         draftNote.photos = try? JSONEncoder().encode(photos)
         draftNote.title = titleTextField.text
         draftNote.content = contentTextView.text
-        draftNote.poiName = selectedPOI.name
-        draftNote.poiAddress = selectedPOI.address
-        draftNote.latitude = selectedPOI.latitude
-        draftNote.longtitude = selectedPOI.longtitude
+        draftNote.poiName = selectedPOI?.name
+        draftNote.poiAddress = selectedPOI?.address
+        draftNote.latitude = selectedPOI?.latitude ?? 0
+        draftNote.longtitude = selectedPOI?.longitude ?? 0
         draftNote.channel = channel
         draftNote.topic = topic
         draftNote.updatedAt = Date()
@@ -155,10 +170,11 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
 //        
 //        NotificationCenter.default.addObserver(self, selector: #selector(toppicDidUpdate(noti:)), name: .init("updateTopic"), object: nil)
         loadDraftNoteData()
+        loadEditNote()
         //定位相关
         locationConfig()
         mapSearch?.delegate = self
-        locationTagsCollectionView.isHidden = selectedPOI != POI()
+        locationTagsCollectionView.isHidden = selectedPOI != nil
 //        locationManagerM.requestWhenInUseAuthorization()
         //图片拖拽手势开启
         photoCollectionView.dragInteractionEnabled = true
@@ -188,26 +204,36 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
         
     }
     
-    func postNote(){
-        
-        guard let uploadedPhotos = FileHelper.uploadImages(images: photos) else {return}
-        
-        let postData = Note(
-            title : titleTextField.text ?? "",
-            content : contentTextView.text ?? "",
-            coverPhoto: uploadedPhotos[0].url,
-            photos: uploadedPhotos,
-            poi : selectedPOI,
-            user: User(),
-            topic: Topic(name: topic)
-        )
-        AF.request(
-            "http://127.0.0.1:8080/postTest",
-            method: .post,
-            parameters: postData,
-            encoder: JSONParameterEncoder.default
-        ).response{res in
-            debugPrint(res)
+    func postNote(completion:@escaping(String)->()){
+        FileHelper.uploadImages(images: photos){photos in
+            hideHUD()
+            guard let uploadedPhotos = photos else {
+                showTextHUD(showView: self.view, "发布失败，请重试")
+                return
+            }
+            let postData = PostNote(
+                id: note?.id ?? -1,
+                title : titleTextField.text ?? "",
+                content : contentTextView.text ?? "",
+                coverPhoto: uploadedPhotos[0].url,
+                photos: uploadedPhotos,
+                poi : selectedPOI,
+                topic: topic,
+                ratio: self.photos[0].size.height / self.photos[0].size.width,
+                likeNumber: note?.likeNumber ?? 0,
+                starNumber: note?.starNumber ?? 0,
+                commentNumber: note?.commentNumber ?? 0
+            )
+            
+            Server.shared().postNoteToServer(data: postData){ res in
+                if let resoult = res{
+                    if resoult == "success"{
+                        completion("笔记上传成功")
+                        return
+                    }
+                }
+                completion("上传失败")
+            }
         }
     }
     
@@ -218,10 +244,22 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
             if note.topic != ""{
                 updateTopic(channel: note.channel!, topic: note.topic!)
             }
-            if note.poiName != ""{
-                let poi = POI(name: note.poiName!,address: note.poiAddress!,latitude: note.latitude, longtitude: note.longtitude)
+        if note.poiName != "" && note.poiName != nil{
+                let poi = POI(name: note.poiName!,address: note.poiAddress!,latitude: note.latitude, longitude: note.longtitude)
                 updateLocation(poi: poi)
             }
+    }
+    
+    func loadEditNote(){
+        guard let note = self.note else { return }
+        titleTextField.text = note.title
+        contentTextView.text = note.content
+        if let topic = note.topic {
+            updateTopic(topic: topic.name)
+        }
+        if let poi = note.poi{
+            updateLocation(poi: poi)
+        }
     }
     
     //MARK: 高德地图相关配置及获取坐标
@@ -260,14 +298,14 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
             }
             
             guard let self = self else {return}
-            
-            if let location = location {
-                self.myPOI.latitude = location.coordinate.latitude
-                self.myPOI.longtitude = location.coordinate.longitude
-                //搜索周边POI
+//
+//            if let location = location {
+//                self.myPOI.latitude = location.coordinate.latitude
+//                self.myPOI.longitude = location.coordinate.longitude
+//                //搜索周边POI
                 self.mapSearch?.aMapPOIAroundSearch(self.aroundSearchRequest)
                 self.locationTagsCollectionView.reloadData()
-            }
+//            }
             
 //            if let reGeocode = reGeocode{
 //                self.city = reGeocode.city
@@ -288,11 +326,12 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
             let address = poi.address.description == poi.district ? "" : poi.address
             let fixedAddress = "\(province!)\(poi.city!)\(poi.district!)\(address!)"
             
-            self.locations.append(POI(name: poi.name,
+            self.locations.append(POI(id : poi.uid,
+                                      name: poi.name,
                                       address: fixedAddress,
                                       city: poi.city,
                                       latitude: poi.location.latitude,
-                                      longtitude: poi.location.longitude))
+                                      longitude: poi.location.longitude))
         }
         locationTagsCollectionView.reloadData()
     }
@@ -314,10 +353,12 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
 extension NoteEditingVC: POIViewControllerDelegate{
     
     func updateLocation(poi:POI) {
-        selectedPOI = poi
+        
         let nolocation = poi.name == "不显示位置" || poi.name == ""
+        
+        selectedPOI = nolocation ? nil : poi
         locationImage.tintColor = nolocation ? .secondaryLabel : .link
-        locationLabel.text = nolocation ? "添加地点" : selectedPOI.name
+        locationLabel.text = nolocation ? "添加地点" : selectedPOI?.name
         locationLabel.textColor = nolocation ? .secondaryLabel : .link
         locationTagsCollectionView.isHidden = locations.isEmpty ? true : !nolocation
         
@@ -328,7 +369,7 @@ extension NoteEditingVC: POIViewControllerDelegate{
 
 //MARK: 反向传值，将topictable中的值传入noteedidting
 extension NoteEditingVC: TopicSelectViewControllerDelegate{
-    func updateTopic(channel: String, topic: String) {
+    func updateTopic(channel: String = "", topic: String) {
         let noTopic = topic == ""
         self.channel = channel
         self.topic = topic
@@ -373,7 +414,7 @@ extension NoteEditingVC: UICollectionViewDelegate, SKPhotoBrowserDelegate{
             let cell = collectionView.cellForItem(at: indexPath) as! LocationTagCell
             selectedPOI = cell.poi!
             locationImage.tintColor = .link
-            locationLabel.text = selectedPOI.name
+            locationLabel.text = selectedPOI?.name
             locationLabel.textColor = .link
             locationTagsCollectionView.isHidden = true
         }

@@ -16,13 +16,6 @@ class POICell: UITableViewCell {
             addressLabel.text = poi.address
         }
     }
-    
-//    var poi = ["",""]{
-//        didSet{
-//            titleLabel.text = poi[0]
-//            addressLabel.text = poi[1]
-//        }
-//    }
 
     @IBOutlet weak var addressLabel: UILabel!
     @IBOutlet weak var titleLabel: UILabel!

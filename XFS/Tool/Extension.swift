@@ -31,10 +31,11 @@ extension UIViewController{
         let hud = MBProgressHUD.showAdded(to: view, animated: true)
         hud.label.text = title
     }
+    
     func hideHUD(){
-        DispatchQueue.main.async {
+        
             MBProgressHUD.hide(for: self.view, animated: true)
-        }
+        
     }
     
     //自动隐藏
@@ -78,15 +79,28 @@ extension UILabel {
     }
     
     //判断行数
-    func textToThisLabelLines(text:String) -> Int {
-      let myText = NSString(string: text)
+    func textToThisLabelLines(text:String?) -> Int {
+        guard let str = text else {return 0}
+        let myText = NSString(string: str)
         if myText == "" {
             return 0
         }
-    // Call self.layoutIfNeeded() if your view uses auto layout
-    let rect = CGSize(width: self.bounds.width, height: CGFloat.greatestFiniteMagnitude)
-    let labelSize = myText.boundingRect(with: rect, options: .usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font: self.font as Any], context: nil)
-        return Int(modf(labelSize.width / (self.frame.width / 2.0)).0) + 1
+        
+        if NSString.init(string: text!).contains("滴定仪") {
+            print("")
+        }
+        let targetWidth = (UIScreen.main.bounds.width - kWaterFallpadding * 3) / 2.0
+        let rect = CGSize(width: targetWidth, height: CGFloat.greatestFiniteMagnitude)
+        let font = UIFont.systemFont(ofSize: 14)
+        let labelSize = myText.boundingRect(with: rect,
+                                            options: .usesLineFragmentOrigin,
+                                            attributes: [NSAttributedString.Key.font: font as Any],
+                                            context: nil)
+        let rawline = NSNumber.init(value: labelSize.height / font.lineHeight).floatValue
+        return NSNumber.init(value: roundf(rawline)).intValue
+//        let rawline = roundf(NSNumber.init(value: labelSize.width / frame.width).floatValue)
+//        return NSNumber.init(value: rawline).intValue
+//        return Int(modf(labelSize.width / (self.frame.width / 2.0)).0) + 1
   }
 }
 
@@ -121,10 +135,21 @@ extension UIImage{
         jpegData(compressionQuality: imageQuality.rawValue)
     }
     
+    var isLiked: Bool{
+        false
+    }
+    
 }
 
 extension Date{
-    
+    func formatDate(isoDate:String) -> String{
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
+        dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
+        let date = dateFormatter.date(from:isoDate)!
+
+        return date.formatterDate
+    }
     //时间格式化
     var formatterDate: String{
         let currentYear = Date().year

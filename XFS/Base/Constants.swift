@@ -8,7 +8,24 @@
 import Foundation
 import UIKit
 
+let eachPageCount = 10
+let userDefaultsTokenKey = "user_token"
+let userDefaultslastOpenTime = "last_login_date"
+
+//let serverAddress = "http://127.0.0.1:8080"
+let serverAddress = "http://jerrys-macbook.local:8080"
+//let serverAddress = "http://192.168.3.79:8080"
+
+
+// MARK: Notification
+let kLikeSucceed = "likeSucceed"
+let kRefreshNotes = "refreshNotes"
+let kUpdateLoaction = "updateLoaction"
+let kUpdateuser = "updateUser"
+let kDeleteNote = "deleteNote"
+
 // MARK: StoaryBOardID
+let kMainTabBar = "mainID"
 let kFellowVCID = "fellowVCID"
 let kDiscoverVCID = "discoverVCID"
 let kNearbyVCID = "nearbyVCID"
@@ -19,6 +36,7 @@ let kNoteDetailVCID = "noteDetailVCID"
 let kDraftNoteNaviVCID = "draftNoteNaviVCID"
 let kMessageVCID = "messageVCID"
 let kNotficationLIstVC = "notficationLIstVC"
+let kMeVCID = "meVCID"
 
 // MARK: CellID
 let kWaterFallCellID = "waterFallCellID"
@@ -31,6 +49,8 @@ let kPOICell = "POICellID"
 let kLocationTagCellID = "locationTagCellID"
 let kDraftNoteWaterfallID = "draftNoteWaterfallID"
 let kMessageCellID = "messageCellID"
+let kNearbyCodeCell = "nearbyCodeCellID"
+let kWaterfallCodeCell = "waterfallCodeCellID"
 
 let kWaterFallpadding:CGFloat = 5
 let kMaxPhotoCount = 9
@@ -42,9 +62,12 @@ let appDelegate = UIApplication.shared.delegate as! AppDelegate
 let context = appDelegate.persistentContainer.viewContext
 
 let imagePH = UIImage(named: "loadFailedImage")!
+let defaultAvatar = UIImage(named: "avatarDefault")!
+
+let imageServerURL = "https://xfs-picture.oss-cn-hangzhou.aliyuncs.com/"
 
 //测试占位数据
-let kChannels = ["推荐","电影","美食","好物品","美妆","穿搭","日常","心情"]
+let kChannels = ["推荐","电影"]
 let kTopics = [
     ["穿神马是神马", "就快瘦到50斤啦", "花5个小时修的靓图", "网红店入坑记"],
     ["魔都名媛会会长", "爬行西藏", "无边泳池只要9块9"],
@@ -58,8 +81,3 @@ let kTopics = [
 
 let kPOITypes = "汽车服务|汽车销售|汽车维修|摩托车服务|餐饮服务|购物服务|生活服务|体育休闲服务|医疗保健服务|住宿服务|风最名胜|商务住宅|政府机构及社会团体|科教文化服务|交通设施服务|金融保险服务|公司企业|道路附服设施|地名地址信息|公共设施"
 
-enum WaterfallCellType{
-    case discover
-    case draftNote
-    case nearby
-}

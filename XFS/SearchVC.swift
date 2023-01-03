@@ -6,8 +6,9 @@
 //
 
 import UIKit
+import XLPagerTabStrip
 
-class SearchVC: UIViewController, UISearchBarDelegate {
+class SearchVC:UIViewController ,UISearchBarDelegate {
 
     @IBAction func cancelButton(_ sender: Any) {
         dismiss(animated: true)
@@ -26,14 +27,15 @@ class SearchVC: UIViewController, UISearchBarDelegate {
         searchBar.resignFirstResponder()
     }
 
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
+//    override func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
+//        let noteVC = storyboard!.instantiateViewController(identifier: kWaterFallVCID) as!WaterFallVC
+//        noteVC.channel = "笔记"
+//        noteVC.cellType = .discover
+//        let userVC = storyboard!.instantiateViewController(identifier: kWaterFallVCID) as!WaterFallVC
+//        userVC.channel = "用户"
+//        userVC.cellType = .fellow
+//
+//        return [noteVC,userVC]
+//    }
+  
 }

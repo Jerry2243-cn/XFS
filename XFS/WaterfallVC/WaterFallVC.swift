@@ -23,6 +23,7 @@ class WaterFallVC: UICollectionViewController, SegementSlideContentScrollViewDel
         dismiss(animated: true)
     }
     
+    var userId:Int?
     
     var popOpt: (()->())?
     
@@ -31,34 +32,29 @@ class WaterFallVC: UICollectionViewController, SegementSlideContentScrollViewDel
     var cellType: WaterfallCellType = .draftNote
     
     var dataList:[Any] = []
-    var currentPage = 1
+    var currentPage = 0
     var isGotAllData = false
-    
-    let testTitle = ["环可能看见你哭你健康你就",
-                     "环可能看见你哭你健",
-                     "sjsfjvisfjvoisfjisfvjfsi",
-                     "sdsjjvkfvks",
-                     "北京北京北京看北京北京北京看病就加不加班",
-                     "",
-                     "环可能看见你哭你健康你就",
-                     "环可能看见你哭你健",
-                     "sjsfjvisfjvoisfjisfvjfsi",
-                     "北京北京北京看北京北京北京看病就加不加班",
-                     "zxc",
-                     "",
-                     "s的陈年旧事"]
     
     lazy var footer = MJRefreshAutoNormalFooter()
     lazy var header = MJRefreshNormalHeader()
    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        collectionView.register(WaterfallCodeCell.self, forCellWithReuseIdentifier: kWaterfallCodeCell)
+        collectionView.register(NearbyCodeCell.self, forCellWithReuseIdentifier: kNearbyCodeCell)
         config()
         getData()
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(refreshData), name:NSNotification.Name(kRefreshNotes) , object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(likeOption(noti:)), name:NSNotification.Name(kLikeSucceed) , object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(deleteOption(noti:)), name:NSNotification.Name(kDeleteNote) , object: nil)
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        if self.cellType == .like || self.cellType == .star{
+            getData()
+        }
+    }
+    
     // MARK: UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -69,25 +65,20 @@ class WaterFallVC: UICollectionViewController, SegementSlideContentScrollViewDel
     //cell数量
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of items
-        switch cellType{
-        case .discover:
-            return 13
-        case .draftNote:
-            return dataList.count
-        case .nearby:
-            return 13
-        }
+        dataList.count
     }
     
     //渲染cell
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         switch cellType{
-        case .discover:
-            return loadDiscoverNoteCell(collectionView, indexPath)
         case .draftNote:
             return loadDraftNoteCell(collectionView, indexPath)
         case .nearby:
             return loadNearbyNoteCell(collectionView, indexPath)
+        case .fellow:
+            return loadFellowNoteCell(collectionView, indexPath)
+        default:
+            return loadDiscoverNoteCell(collectionView, indexPath)
         }
         
     }
@@ -99,8 +90,10 @@ class WaterFallVC: UICollectionViewController, SegementSlideContentScrollViewDel
             discoverNoteCellTap(collectionView, indexPath)
         case .draftNote:
             draftNoteCellTap(collectionView, indexPath)
-        case .nearby:
-            nearbyNoteCellTap(collectionView, indexPath)
+        case .fellow:
+            print("noAction")
+        default:
+            discoverNoteCellTap(collectionView, indexPath)
         }
     }
 
@@ -109,39 +102,56 @@ class WaterFallVC: UICollectionViewController, SegementSlideContentScrollViewDel
 extension WaterFallVC: CHTCollectionViewDelegateWaterfallLayout{
     //定义cell大小
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        if cellType == .fellow {
+            guard let note = dataList[indexPath.item] as? Note else{return CGSize()}
+            let cellW = UIScreen.main.bounds.width
+            var imageRato = note.ratio
+            if imageRato > 1.35 {
+                imageRato = 1.35
+            }else if imageRato < 2.0 / 3.0 {
+                imageRato = 2.0 / 3.0
+            }
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kFellowCellID, for: indexPath) as! FellowCell
+            var cellH = cellW * imageRato + cell.topInfoStack.bounds.height + cell.bottomInfoStack.bounds.height + 48//后续更改
+            if note.title == nil && note.content == nil{
+                cellH -= 29
+            }
+            return CGSize(width: cellW, height: cellH )
+        }
+        
         var size: CGSize
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kWaterFallCellID, for: indexPath) as! WaterFallwCell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kWaterfallCodeCell, for: indexPath) as! WaterfallCodeCell
         var lines = 1
+        var imageRatio : Double
         switch cellType{
         case .draftNote:
             let note = dataList[indexPath.item] as? DraftNote
             size = UIImage(note?.coverPhoto)!.size
-            lines = cell.titleLabel.textToThisLabelLines(text: note?.title ?? "")
+            let h = size.height
+            let w = size.width
+            imageRatio = h / w
+            lines = cell.titleLabel.textToThisLabelLines(text: note?.title)
         default:
-            size = UIImage(named: "\(indexPath.item + 1)")!.size
-            lines = cell.titleLabel.textToThisLabelLines(text: testTitle[indexPath.item])
+            if let note = dataList[indexPath.item] as? Note{
+                imageRatio = note.ratio
+                lines = cell.titleLabel.textToThisLabelLines(text: note.title)
+            }else{
+                size = imagePH.size
+                let h = size.height
+                let w = size.width
+                imageRatio = h / w
+            }
         }
-        
         let cellW = (UIScreen.main.bounds.width - kWaterFallpadding * 3) / 2
-        let h = size.height
-        let w = size.width
-        var imageRato = h / w
-        if imageRato > 1.35 {
-            imageRato = 1.35
-        }else if imageRato < 2.0 / 3.0 {
-            imageRato = 2.0 / 3.0
+        if imageRatio > 1.35 {
+            imageRatio = 1.35
+        }else if imageRatio < 2.0 / 3.0 {
+            imageRatio = 2.0 / 3.0
         }
-        var cellH = cellW * imageRato + cell.infoStack.bounds.height + 20
-        
-//        if lines == 0{
-            cellH -= lines == 0 ? cell.infoStack.spacing + 16.333333 : 0
-//            cellH -= cell.titleLabel.bounds.height - 0.5
-//            cellH -= 16.333333
-//        }else if lines == 2{
-//            cellH += cell.titleLabel.bounds.height
-            cellH += lines == 2 ? 17 :0
-//        }
-        
+        var cellH = cellW * imageRatio + 44 + 20
+            cellH -= lines == 0 ? 9 + 16.333333 : 0
+            cellH += lines == 2 ? 17 : 0
         return CGSize(width: cellW, height: cellH )
     }
 }
@@ -151,11 +161,16 @@ extension WaterFallVC{
     func config(){
         //collectionView配置
         let layout = collectionView.collectionViewLayout as! CHTCollectionViewWaterfallLayout
-        layout.columnCount = 2
         layout.minimumColumnSpacing = kWaterFallpadding
         layout.minimumInteritemSpacing = kWaterFallpadding
-        layout.sectionInset = UIEdgeInsets(top: kWaterFallpadding   , left: kWaterFallpadding, bottom: kWaterFallpadding, right: kWaterFallpadding)
-        collectionView.backgroundColor = .secondarySystemBackground
+        if cellType == .fellow {
+            layout.columnCount = 1
+            layout.sectionInset = UIEdgeInsets(top: kWaterFallpadding   , left: 0, bottom: kWaterFallpadding, right: 0)
+        }else{
+            layout.columnCount = 2
+            layout.sectionInset = UIEdgeInsets(top: kWaterFallpadding   , left: kWaterFallpadding, bottom: kWaterFallpadding, right: kWaterFallpadding)
+            collectionView.backgroundColor = .secondarySystemBackground
+        }
         
         //加载首尾拉取加载
         collectionView.mj_footer = footer
@@ -183,9 +198,9 @@ extension WaterFallVC: IndicatorInfoProvider{
 extension WaterFallVC{
     
     @objc func refreshData(){
-        currentPage = 1
+        currentPage = 0
         isGotAllData = false
-        dataList = []
+        
         getData()
         collectionView.mj_footer?.resetNoMoreData()
         collectionView.mj_header?.endRefreshing()
@@ -204,11 +219,19 @@ extension WaterFallVC{
     func getData(){
         switch cellType{
         case .discover:
-            loadDiscoverNotes()
+            loadDiscoverNotes(page: currentPage)
         case .draftNote:
             loadDraftNotes(page: currentPage)
         case.nearby:
-            loadNerbyNotes()
+            loadNerbyNotes(page: currentPage)
+        case.mine:
+            loadMyNotes(page: currentPage)
+        case.like:
+            loadLikeNotes(page: currentPage)
+        case .star:
+            loadStarNotes(page: currentPage)
+        case .fellow:
+            loadFellowNotes(page: currentPage)
         }
     }
 }
@@ -219,8 +242,8 @@ extension WaterFallVC{
     //获取草稿笔记
     func loadDraftNotes(page:Int){
         let request = DraftNote.fetchRequest() as NSFetchRequest<DraftNote>
-        request.fetchLimit = 8
-        request.fetchOffset = (page - 1) * 8
+        request.fetchLimit = eachPageCount
+        request.fetchOffset = page * eachPageCount
         request.propertiesToFetch = ["coverPhoto","updatedAt","title"]
         let draftNotes = try! context.fetch(request)
         if draftNotes.count == 0{
@@ -229,7 +252,7 @@ extension WaterFallVC{
             for draftNote in draftNotes{
                 dataList.append(draftNote)
             }
-            if draftNotes.count < 8{
+            if draftNotes.count < eachPageCount{
                 footer.endRefreshingWithNoMoreData()
             }else{
                 footer.endRefreshing()
@@ -239,16 +262,67 @@ extension WaterFallVC{
        
     }
     
-    func loadNerbyNotes(){
-        footer.endRefreshingWithNoMoreData()
-//        collectionView.reloadData()
+    func loadNerbyNotes(page:Int){
+        Server.shared().fetchNotesByCity(page: page) { data in
+            self.loadedData(page: page, data: data)
+        }
     }
     
-    func loadDiscoverNotes(){
-        footer.endRefreshingWithNoMoreData()
-//        collectionView.reloadData()
+    func loadDiscoverNotes(page:Int){
+        Server.shared().fetchNotesByChannel(channel: self.channel, page: page) { data in
+            self.loadedData(page: page, data: data)
+        }
     }
     
+    func loadLikeNotes(page:Int){
+        Server.shared().fetchLikedNotes(page: page) {data in
+            self.loadedData(page: page, data: data)
+        }
+    }
+    
+    func loadMyNotes(page:Int){
+        footer.endRefreshingWithNoMoreData()
+        Server.shared().fetchNotesByUser(userId: self.userId, page: page) {data in
+            self.loadedData(page: page, data: data)
+        }
+    }
+    
+    func loadStarNotes(page:Int){
+        Server.shared().fetchStarNotes(page: page) {data in
+            self.loadedData(page: page, data: data)
+        }
+    }
+    
+    func loadFellowNotes(page:Int){
+        Server.shared().fetchFellowNotes(page: page) { data in
+            self.loadedData(page: page, data: data)
+        }
+    }
+    
+    func loadedData(page:Int, data:[Note]?){
+        guard let notes = data else {
+            showTextHUD(showView: self.view, "加载笔记失败")
+            return
+        }
+        if notes.count == 0{
+            isGotAllData = true
+        }else{
+            if page == 0{
+                dataList = []
+            }
+            for note in notes{
+                dataList.append(note)
+            }
+            if notes.count < eachPageCount{
+                footer.endRefreshingWithNoMoreData()
+            }else{
+                footer.endRefreshing()
+            }
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+        }
+    }
 }
 
 extension WaterFallVC{
@@ -261,28 +335,24 @@ extension WaterFallVC{
         return cell
     }
     
-    func loadDiscoverNoteCell(_ collectionView: UICollectionView,_ indexPath: IndexPath) -> WaterFallwCell{
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kWaterFallCellID, for: indexPath) as! WaterFallwCell
-        cell.photosImageView.image = UIImage(named: "\(indexPath.item + 1)")
-        cell.avatarImage.image = UIImage(named: "5")
-        cell.titleLabel.isHidden = testTitle[indexPath.item] == ""
-        cell.titleLabel.text = testTitle[indexPath.item]
-        cell.nicknameLabel.text = "🐔你太美"
-        cell.likeButton.setTitle("11.4万", for: .normal)
-        cell.hero.id = "cover\(indexPath.item)"
+    
+    func loadDiscoverNoteCell(_ collectionView: UICollectionView,_ indexPath: IndexPath) -> WaterfallCodeCell{
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kWaterfallCodeCell, for: indexPath) as! WaterfallCodeCell
+        cell.note = dataList[indexPath.item] as? Note
+        cell.hero.id = "cover\(cell.note?.id ?? indexPath.item)\(cellType)"
         return cell
     }
     
-    func loadNearbyNoteCell(_ collectionView: UICollectionView,_ indexPath: IndexPath) -> NearbyCell{
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kNearbyCellID, for: indexPath) as! NearbyCell
+    func loadFellowNoteCell(_ collectionView: UICollectionView,_ indexPath: IndexPath) -> FellowCell{
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kFellowCellID, for: indexPath) as! FellowCell
+        cell.note = dataList[indexPath.item] as? Note
+        return cell
+    }
     
-        cell.imageView.image = UIImage(named: "\(indexPath.item + 1)")
-        cell.avatarImage.image = UIImage(named: "5")
-        cell.titleLabel.isHidden = testTitle[indexPath.item] == ""
-        cell.titleLabel.text = testTitle[indexPath.item]
-        cell.nicknameLabel.text = "🐔你太美"
-        cell.distanceLabel.text = "11.4km"
-        cell.hero.id = "cover\(indexPath.item)"
+    func loadNearbyNoteCell(_ collectionView: UICollectionView,_ indexPath: IndexPath) -> NearbyCodeCell{
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kNearbyCodeCell, for: indexPath) as! NearbyCodeCell
+        cell.note = dataList[indexPath.item] as? Note
+        cell.hero.id = "cover\(cell.note?.id ?? indexPath.item)\(cellType)"
         return cell
     }
 }
@@ -301,9 +371,9 @@ extension WaterFallVC{
             appDelegate.saveContext()
             self.dataList.remove(at: index)
             //视图
-//            self.collectionView.performBatchUpdates {
-//                self.collectionView.deleteItems(at: [IndexPath(item: index, section: 0)])
-//            }
+            self.collectionView.performBatchUpdates {
+                self.collectionView.deleteItems(at: [IndexPath(item: index, section: 0)])
+            }
             self.collectionView.reloadData()
         }
         alert.addAction(cancelAction)
@@ -315,19 +385,22 @@ extension WaterFallVC{
 extension WaterFallVC{
     
     func discoverNoteCellTap(_ collectionView: UICollectionView,_ indexPath: IndexPath){
-        let detaiNoteVC = storyboard!.instantiateViewController(withIdentifier: kNoteDetailVCID) as! NoteDetailVC
-        detaiNoteVC.coverImage = UIImage(named: "\(indexPath.item + 1)")!
+        let detaiNoteVC = storyboard!.instantiateViewController(identifier: kNoteDetailVCID) { coder in
+            NoteDetailVC(coder: coder, note: self.dataList[indexPath.item] as! Note)
+        }
         detaiNoteVC.modalPresentationStyle = .fullScreen
-        detaiNoteVC.noteDetalHeroID = "cover\(indexPath.item)"
+        let note = dataList[indexPath.item] as! Note
+        detaiNoteVC.noteDetalHeroID = "cover\(note.id)\(cellType)"
         present(detaiNoteVC, animated: true)
     }
     
     func nearbyNoteCellTap(_ collectionView: UICollectionView,_ indexPath: IndexPath){
-        let detaiNoteVC = storyboard!.instantiateViewController(withIdentifier: kNoteDetailVCID) as! NoteDetailVC
-        detaiNoteVC.coverImage = UIImage(named: "\(indexPath.item + 1)")!
+        let detaiNoteVC = storyboard!.instantiateViewController(identifier: kNoteDetailVCID) { coder in
+            NoteDetailVC(coder: coder, note: self.dataList[indexPath.item] as! Note)
+        }
         detaiNoteVC.modalPresentationStyle = .fullScreen
-        detaiNoteVC.noteDetalHeroID = "cover\(indexPath.item)"
-
+        let note = dataList[indexPath.item] as! Note
+        detaiNoteVC.noteDetalHeroID = "cover\(note.id)\(cellType)"
         present(detaiNoteVC, animated: true)
     }
     
@@ -343,15 +416,61 @@ extension WaterFallVC{
             vc.draftNote = note
             vc.saveNoteOptions = {
                 self.showTextHUD(showView: self.view, "笔记保存成功")
-                collectionView.reloadData()
+                self.collectionView.reloadData()
             }
             vc.publishNoteOptions = {
-                self.showTextHUD(showView: self.view, "笔记发布test")
+                self.showTextHUD(showView: self.view, "笔记发布成功")
+                let seletedNoote = self.dataList[indexPath.item] as! DraftNote
+                context.delete(seletedNoote)
+                appDelegate.saveContext()
+                self.dataList.remove(at: indexPath.item)
+                self.collectionView.reloadData()
             }
             navigationController?.pushViewController(vc, animated: true)
             
         }else{
             showTextHUD(showView: view, "加载草稿失败")
+        }
+    }
+}
+
+extension WaterFallVC{
+    
+    @objc func likeOption(noti:NSNotification){
+        let newNote = noti.object as! Note
+        for i in 0 ..< self.dataList.count {
+            var n = self.dataList[i] as! Note
+            if n.user.id == newNote.user.id && n.user.fellow != newNote.user.fellow{
+                n.user = newNote.user
+                self.dataList[i] = n
+            }
+            if n.id == newNote.id {
+                if !newNote.liked && self.cellType == .like{
+                    self.dataList.remove(at: i)
+                    self.collectionView.performBatchUpdates {
+                        self.collectionView.deleteItems(at: [IndexPath(item: i, section: 0)])
+                    }
+                    return
+                }else{
+                    self.dataList[i] = newNote
+                }
+                
+                self.collectionView.reloadData()
+            }
+        }
+    }
+    
+    @objc func deleteOption(noti:NSNotification){
+        let deleteNoteId = noti.object as! Int
+        for i in 0 ..< self.dataList.count {
+            let note = self.dataList[i] as! Note
+            if note.id == deleteNoteId{
+                self.dataList.remove(at: i)
+                self.collectionView.performBatchUpdates {
+                    self.collectionView.deleteItems(at: [IndexPath(item: i, section: 0)])
+                }
+                return
+            }
         }
     }
 }

@@ -11,26 +11,51 @@ import SegementSlide
 
 class MeVC: SegementSlideDefaultViewController {
     
-    @objc func go(){
+    var user:User?
+    
+    lazy var leftBtn = {
+       let btn = UIButton()
+        btn.tintColor = .label
+        btn.setImage(UIImage(named: "line.3.horizontal"), for: .normal)
+        return btn
+    }()
+    
+    @IBOutlet weak var shareButton: UIButton!
+    
+    @IBAction func gotoDraft(_ sender: Any) {
         let vc = storyboard!.instantiateViewController(withIdentifier: "naviDraftNote") as! UINavigationController
         vc.modalPresentationStyle = .fullScreen
         present(vc, animated: true)
-        
     }
     
     @objc func settingOrChatBtnAct(){
-        let nav = UINavigationController(rootViewController: SettingsVC())
-//        nav.modalPresentationStyle = .fullScreen;
-        self.present(nav, animated: true)
+        hidesBottomBarWhenPushed = true
+        let vc = SettingsVC()
+//        vc.hero.isEnabled = false
+        navigationController?.pushViewController(vc, animated: true)
+        hidesBottomBarWhenPushed = false
+    }
+    
+    @objc func editOrFellowAct(){
+        if let _ = self.user {
+            
+        }else{
+            hidesBottomBarWhenPushed = true
+            let vc = UserInfoEditVC()
+            vc.user = appDelegate.user
+            navigationController?.pushViewController(vc, animated: true)
+            hidesBottomBarWhenPushed = false
+        }
     }
 
     override func segementSlideHeaderView() -> UIView? {
         let headerView = Bundle.loadView(fromNIb: "MeHeaderView", with: MeHeaderView.self)
-        headerView.shareBUtton.addTarget(self, action: #selector(go), for: .touchUpInside)
+        headerView.user = appDelegate.user
         headerView.settingsOrChatButton.addTarget(self, action: #selector(settingOrChatBtnAct), for: .touchUpInside)
-           headerView.translatesAutoresizingMaskIntoConstraints = false
-        headerView.heightAnchor.constraint(equalToConstant: headerView.rootStackView.frame.height + 16  ).isActive = true
-           return headerView
+        headerView.editOrFellowButton.addTarget(self, action: #selector(editOrFellowAct), for: .touchUpInside)
+        headerView.translatesAutoresizingMaskIntoConstraints = false
+        headerView.heightAnchor.constraint(equalToConstant: headerView.rootStackView.frame.height).isActive = true
+        return headerView
        }
 
        override var titlesInSwitcher: [String] {
@@ -44,20 +69,47 @@ class MeVC: SegementSlideDefaultViewController {
         congfig.indicatorColor = mainColor!
         return congfig
     }
+    
+    override var bouncesType: BouncesType {
+        return .child
+    }
 
        override func segementSlideContentViewController(at index: Int) -> SegementSlideContentScrollViewDelegate? {
-           let vc = storyboard!.instantiateViewController(withIdentifier: kWaterFallVCID) as! WaterFallVC
-           vc.cellType = .discover
-           return vc
+           if index == 0 {
+               let vc = storyboard!.instantiateViewController(withIdentifier: kWaterFallVCID) as! WaterFallVC
+               vc.cellType = .mine
+               return vc
+           }
+           if index == 1 {
+               let vc = storyboard!.instantiateViewController(withIdentifier: kWaterFallVCID) as! WaterFallVC
+               vc.cellType = .star
+               return vc
+           }
+           if index == 2{
+               let vc = storyboard!.instantiateViewController(withIdentifier: kWaterFallVCID) as! WaterFallVC
+               vc.cellType = .like
+               return vc
+           }
+           return storyboard!.instantiateViewController(withIdentifier: kWaterFallVCID) as! WaterFallVC
        }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.view.backgroundColor = .systemBackground
+    }
 
        override func viewDidLoad() {
            super.viewDidLoad()
-           
 
-           let statusBarOverlayView =  UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: statusBarH))
-           statusBarOverlayView.backgroundColor = .systemBackground
-           view.addSubview(statusBarOverlayView)
+           shareButton.setTitle("", for: .normal)
+//           self.navigationController?.navigationBar.backgroundColor = .systemBackground
+           navigationItem.backButtonDisplayMode = .minimal
+           navigationItem.title = ""
+        
+           navigationController?.navigationBar.isTranslucent = false
+           navigationController?.view.backgroundColor = .systemBackground
+//           let statusBarOverlayView =  UIView(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: statusBarH))
+//           statusBarOverlayView.backgroundColor = .systemBackground
+//           view.addSubview(statusBarOverlayView)
            scrollView.backgroundColor = .systemBackground
            contentView.backgroundColor = .systemBackground
            switcherView.backgroundColor = .systemBackground

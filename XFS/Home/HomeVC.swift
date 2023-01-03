@@ -101,10 +101,11 @@ class HomeVC: ButtonBarPagerTabStripViewController, AMapLocationManagerDelegate{
             
             if let location = location {
                 self.myPOI.latitude = location.coordinate.latitude
-                self.myPOI.longtitude = location.coordinate.longitude
+                self.myPOI.longitude = location.coordinate.longitude
             }
-            
             if let reGeocode = reGeocode {
+                self.myPOI.city = reGeocode.city
+                appDelegate.myPOI = self.myPOI
                 let indexStart = reGeocode.city.startIndex
                 let index = reGeocode.city.index(indexStart, offsetBy: 2)
                 let fixed = String(reGeocode.city[indexStart..<index])
@@ -114,6 +115,7 @@ class HomeVC: ButtonBarPagerTabStripViewController, AMapLocationManagerDelegate{
                     self.reloadPagerTabStripView()
                 }
             }
+            
         })
     }
     
@@ -121,8 +123,12 @@ class HomeVC: ButtonBarPagerTabStripViewController, AMapLocationManagerDelegate{
     //加载三个子视图
     override func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
         let DiscoverVC = storyboard!.instantiateViewController(identifier: kDiscoverVCID)
-        let FellowVC = storyboard!.instantiateViewController(identifier: kFellowVCID)
+        let FellowVC = storyboard!.instantiateViewController(identifier: kWaterFallVCID) as! WaterFallVC
         let NearbyVC = storyboard!.instantiateViewController(identifier: kWaterFallVCID) as! WaterFallVC
+        
+        FellowVC.channel = "关注"
+        FellowVC.cellType = .fellow
+        
         NearbyVC.channel = myPOI.city == "" ? "附近" : myPOI.city
         NearbyVC.cellType = .nearby
         NearbyVC.myPOI = myPOI

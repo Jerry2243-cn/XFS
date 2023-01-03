@@ -12,19 +12,20 @@ class SettingsVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
    
     
     lazy var settingsTableView: UITableView = {
-        let tableView = UITableView(frame: CGRect())
-        
+        let tableView = UITableView(frame: CGRect(),style: .insetGrouped)
+//        tableView.backgroundColor = .systemBackground
+        tableView.bounces = false
         return tableView
     }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         setUI()
     }
 
     func setUI(){
-        view.backgroundColor = .systemBackground
+        navigationController?.view.backgroundColor = .secondarySystemBackground
+        view.backgroundColor = .secondarySystemBackground
         navigationItem.title = "设置"
         settingsTableView.register(SettingsCell.self, forCellReuseIdentifier: "settingsCell")
         settingsTableView.delegate = self
@@ -33,8 +34,8 @@ class SettingsVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
         settingsTableView.snp.makeConstraints { make in
             make.left.equalTo(self.view)
             make.right.equalTo(self.view)
-            make.top.equalTo(self.view).offset(44)
-            make.bottom.equalTo(self.view.snp.bottom)
+            make.top.equalTo(self.view)
+            make.bottom.equalTo(self.view)
         }
     }
 
@@ -47,7 +48,7 @@ class SettingsVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
         case 2 :
             return 1
         case 3 :
-            return 5
+            return 1
         default:
             return 0
         }
@@ -57,32 +58,64 @@ class SettingsVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
         4
     }
     
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        let rows = tableView.numberOfRows(inSection: indexPath.section)
-     
-        
-    }
-    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "settingsCell") as! SettingsCell
-//        switch indexPath.section{
-//        case 0 :
-//            if indexPath.row == 0 {
-//                cell.titleLabel.text = "账号与安全"
-//            }
-//        case 1 :
-//            return 3
-//        case 2 :
-//            return 1
-//        case 3 :
-//            return 5
-//        default:
-//            return 0
-//        }
-            cell.titleLabel.text = "账号与安全"
+        cell.accessoryType = .disclosureIndicator
+        switch indexPath.section{
+        case 0 :
+            if indexPath.row == 0 {
+                cell.titleLabel.text = "账号与安全"
+            }else{
+                cell.titleLabel.text = "隐私设置"
+            }
+        case 1 :
+            if indexPath.row == 0{
+                cell.titleLabel.text = "通知设置"
+            }else if indexPath.row == 1{
+                cell.titleLabel.text = "通用设置"
+            }else{
+                cell.titleLabel.text = "深色模式"
+            }
+        case 2 :
+                cell.titleLabel.text = "关于小粉书"
+        case 3 :
+            cell.titleLabel.text = "退出登录"
+            cell.isLogout = true
+            cell.accessoryType = .none
+        default:
+            cell.titleLabel.text = "error"
+        }
+        
         return cell
     }
     
-
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        switch indexPath.section{
+        case 3:
+            logoutAlert()
+        default:
+            debugPrint(indexPath.section)
+        }
+    }
+    
+    func logout(){
+        UserDefaults.standard.removeObject(forKey: userDefaultsTokenKey)
+        Server.shared().token = ""
+        let nav = UINavigationController(rootViewController: LoginVC())
+        UIApplication.shared.windows.first?.rootViewController = nav
+    }
+    
+    private func logoutAlert(){
+        let alert = UIAlertController(title: "确认退出登录嘛", message: nil, preferredStyle: .alert)
+        let cancel = UIAlertAction(title: "取消", style: .cancel){_ in
+            
+        }
+        let delete = UIAlertAction(title: "确认", style: .default){_ in
+            self.logout()
+        }
+        alert.addAction(cancel)
+        alert.addAction(delete)
+        present(alert, animated: true)
+    }
 }

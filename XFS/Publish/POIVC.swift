@@ -12,8 +12,8 @@ class POIVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDelegate {
     
     //MARK: 全局变量
     var POIDelegate: POIViewControllerDelegate?
-    lazy var selectedPOI = POI()
-    lazy var myPOI = POI()
+    var selectedPOI:POI?
+    lazy var myPOI = appDelegate.myPOI
     
     //MARK: 布局组件outle
     @IBOutlet weak var searchBar: UISearchBar!
@@ -31,7 +31,9 @@ class POIVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDelegate {
         let request = AMapPOIAroundSearchRequest()
         request.offset = 20
         request.types = kPOITypes
-        request.location = AMapGeoPoint.location(withLatitude: CGFloat(myPOI.latitude), longitude: CGFloat(myPOI.longtitude))
+        if let poi = myPOI{
+            request.location = AMapGeoPoint.location(withLatitude: CGFloat(poi.latitude), longitude: CGFloat(poi.longitude))
+        }
         return request
     }()
     lazy var keywordSearchRequest: AMapPOIKeywordsSearchRequest = {
@@ -74,12 +76,11 @@ class POIVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDelegate {
         
         
         for poi in response.pois {
-            
             let province = poi.province.description == poi.city.description ? "" : poi.province
             let address = poi.address.description == poi.district ? "" : poi.address
             let fixedAddress = "\(province!)\(poi.city!)\(poi.district!)\(address!)"
             
-            pois.append(POI(name: poi.name, address: fixedAddress, latitude: poi.location.latitude, longtitude: poi.location.longitude))
+            pois.append(POI(id:poi.uid, name: poi.name, address: fixedAddress,city: poi.city, latitude: poi.location.latitude, longitude: poi.location.longitude))
         }
         self.tableView.reloadData()
         //解析response获取POI信息，具体解析见 Demo
@@ -117,15 +118,15 @@ class POIVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDelegate {
             
             guard let self = self else {return}
             
-            if let location = location {
+//            if let _ = location {
 //                print("location:" + location.description)
-                self.myPOI.latitude = location.coordinate.latitude
-                self.myPOI.longtitude = location.coordinate.longitude
+//                self.myPOI.latitude = location.coordinate.latitude
+//                self.myPOI.longitude = location.coordinate.longitude
                 
                 //搜索周边POI
                 self.footer.setRefreshingTarget(self, refreshingAction: #selector(self.footerRefreshAround))
                 self.aroundLocationsSearch()
-            }
+//            }
         })
     }
 

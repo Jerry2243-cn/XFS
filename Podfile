@@ -22,5 +22,9 @@ target 'XFS' do
     pod 'SegementSlide', '3.0.1'
     pod 'SnapKit'
     pod 'Hero'
+    pod 'Motion'
     pod 'AliyunOSSiOS'
+    pod 'SwiftyJSON'
+    pod 'Kingfisher' , '6.0'
+    pod 'ImageSlideshow/Kingfisher'
 end

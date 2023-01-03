@@ -9,6 +9,7 @@ import UIKit
 import CHTCollectionViewWaterfallLayout
 import XLPagerTabStrip
 import SKPhotoBrowser
+import MJRefresh
 
 class FellowVC: UICollectionViewController {
     
@@ -55,7 +56,7 @@ class FellowVC: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kFellowCellID, for: indexPath) as! FellowCell
     
-        cell.imageView.image = UIImage(named: "\(indexPath.item + 1)")
+//        cell.imageView.image = UIImage(named: "\(indexPath.item + 1)")
         cell.avatarImageView.image = UIImage(named: "5")
         cell.nicknameLable.text = "🐔你太美"
         cell.titleAndContentLabel.text = "全民制作人们大家好，我是练习时长两年半的个人练习生蔡徐坤，喜欢唱、跳、rap、篮球"
