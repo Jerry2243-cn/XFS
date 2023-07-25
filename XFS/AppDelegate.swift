@@ -140,9 +140,8 @@ extension AppDelegate{
     
     func initAliyunOSS(){
          
-        let credentialProvider = OSSPlainTextAKSKPairCredentialProvider(plainTextAccessKey: "LTAI5tQhJH4RRxJCHmNWHEP3", secretKey: "VUnw0Cq8vwtAypSZJT6CyDDKuy0IOD")
 
-        client = OSSClient(endpoint: "oss-cn-hangzhou.aliyuncs.com", credentialProvider: credentialProvider)
+//         client = OSSClient(endpoint: "oss-cn-hangzhou.aliyuncs.com", credentialProvider: credentialProvider)
        
         
     }
