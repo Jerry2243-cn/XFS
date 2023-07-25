@@ -33,7 +33,7 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         tabBarApperance.stackedLayoutAppearance = tabBarItemApperance
         
         tabBar.standardAppearance = tabBarApperance
-        
+    
     }
     
     override func viewDidAppear(_ animated: Bool) {

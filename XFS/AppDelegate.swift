@@ -26,10 +26,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
-        if server.token == ""{
-            let nav = UINavigationController(rootViewController: LoginVC())
-            UIApplication.shared.windows.first?.rootViewController = nav
-        }
+        
         
         config()
         loginTest()

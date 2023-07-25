@@ -10,7 +10,7 @@ import Kingfisher
 
 class MeHeaderView: UIView {
     
-    var user:User? = appDelegate.user{
+    var user:User?{
         didSet{
             guard let data = user else { return }
             if let avatar = data.avatar {
@@ -51,7 +51,7 @@ class MeHeaderView: UIView {
         editOrFellowButton.makeCapsule()
         settingsOrChatButton.makeCapsule()
         settingsOrChatButton.setTitle("", for: .normal)
-        NotificationCenter.default.addObserver(self, selector: #selector(reSetUser), name: NSNotification.Name(kUpdateuser), object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(reSetUser), name: NSNotification.Name(kUpdateuser), object: nil)
     }
    
     @objc func reSetUser(){

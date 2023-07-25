@@ -11,12 +11,24 @@ import Alamofire
 import Hero
 import Kingfisher
 import Motion
+import GrowingTextView
+import MJRefresh
 
 class NoteDetailVC: UIViewController {
 
     var note:Note
     var noteDetalHeroID:String?
     var photos:[Photo]
+    var comments:[Comment] = []
+    
+    var postComment:PostComment
+    
+    lazy var footer = MJRefreshAutoNormalFooter()
+    
+    var currentPage = 0
+    var isGotAllData = false
+    var deleteRows:[Int] = []
+    
     @IBOutlet weak var backeButton: UIButton!
     @IBOutlet weak var avatarButton: UIButton!
     @IBOutlet weak var nicknameButton: UIButton!
@@ -35,6 +47,7 @@ class NoteDetailVC: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     
     @IBOutlet weak var headerView: UIView!
+    @IBOutlet weak var photosShow: ImageSlideshow!
     @IBOutlet weak var imageHeight: NSLayoutConstraint!
     
     @IBOutlet weak var commontButton: BigButton!
@@ -42,10 +55,26 @@ class NoteDetailVC: UIViewController {
     @IBOutlet weak var starBUtton: UIButton!
     @IBOutlet weak var commenticonButton: UIButton!
     
-    @IBOutlet weak var photosShow: ImageSlideshow!
+    @IBOutlet weak var commentBarView: UIView!
+    @IBOutlet weak var commentTextView: GrowingTextView!
+    
+    @IBOutlet weak var sendCommentButton: UIButton!
+    @IBOutlet weak var commentBarBottom: NSLayoutConstraint!
+    
+    lazy var overlayView: UIView = {
+        let view = UIView(frame: view.frame)
+        view.backgroundColor = UIColor(white: 0, alpha: 0.2)
+        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        view.addGestureRecognizer(tap)
+        return view
+    }()
+    
     
     @IBAction func backButtonAction(_ sender: Any) {
         dismiss(animated: true)
+    }
+    @IBAction func commentButtonAction(_ sender: Any) {
+        commentBarAppear()
     }
     
     init?(coder: NSCoder, note:Note) {
@@ -53,6 +82,8 @@ class NoteDetailVC: UIViewController {
         photos = note.photos.sorted(by: { p1, p2 in
             p1.orderNumber < p2.orderNumber
         })
+        self.postComment = PostComment(noteId: note.id)
+        
         super.init(coder: coder)
     }
     
@@ -62,43 +93,34 @@ class NoteDetailVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.hero.isEnabled = true
       
         view.hero.id = noteDetalHeroID
 //        let pan = UIPanGestureRecognizer(target: self, action: #selector(slide(pan:)))
 //        view.addGestureRecognizer(pan)
         setUI()
         config()
+        setData()
+        getComments()
         
-       
-        let photoArr = self.photos.compactMap {KingfisherSource(urlString: $0.url)}
+        tableView.register(UINib(nibName: "CommentView", bundle: nil), forHeaderFooterViewReuseIdentifier: kCommentViewID)
+        tableView.register(FooterView.self, forHeaderFooterViewReuseIdentifier: kCommentSectionFooterView)
         
-        photosShow.setImageInputs(photoArr)
-        photosShow.backgroundColor = .white
-        photosShow.currentSlideshowItem?.bounces = false
-       
-        var imageRatio = note.ratio
-        if imageRatio > 1.35 {
-            imageRatio = 1.35
-        }else if imageRatio < 2.0 / 3.0 {
-            imageRatio = 2.0 / 3.0
-        }
-        let width = UIScreen.main.bounds.width
-        let pheight = imageRatio * width
-        imageHeight.constant = pheight
-        
-       setData()
-        if appDelegate.user?.id == note.user.id{
-            fellowButton.isHidden = true
-        } else {
-            shareButton.isHidden = true
-            fellowButton.addTarget(self, action: #selector(fellow), for: .touchUpInside)
-        }
+        let tap = UITapGestureRecognizer(target: self, action: #selector(goUserMine))
+        userImageButton.addGestureRecognizer(tap)
+        topicButton.addTarget(self, action: #selector(goTopicDetail), for: .touchUpInside)
         likeButton.addTarget(self, action: #selector(likeAction), for: .touchUpInside)
         starBUtton.addTarget(self, action: #selector(starAction), for: .touchUpInside)
         shareButton.addTarget(self, action: #selector(shareAction), for: .touchUpInside)
+        commontButton.addTarget(self, action: #selector(commentButtonActions), for: .touchUpInside)
+        commenticonButton.addTarget(self, action: #selector(commentButtonActions), for: .touchUpInside)
+        sendCommentButton.addTarget(self, action: #selector(sendCommentAction), for: .touchUpInside)
+        avatarButton.addTarget(self, action: #selector(goMine), for: .touchUpInside)
+        nicknameButton.addTarget(self, action: #selector(goMine), for: .touchUpInside)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChangeFrame), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(fellow), name: NSNotification.Name(kFellow), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(commentToMine), name: NSNotification.Name(kGotoMine), object: nil)
     }
-    
+
     override func viewDidLayoutSubviews() {
         let height = headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
         var frame = headerView.frame
@@ -179,19 +201,81 @@ class NoteDetailVC: UIViewController {
         fellowButton.layer.borderColor = mainColor?.cgColor
         backeButton.setTitle("", for: .normal)
         shareButton.setTitle("", for: .normal)
+        if appDelegate.user?.id == note.user.id{
+            fellowButton.isHidden = true
+        } else {
+            shareButton.isHidden = true
+            fellowButton.addTarget(self, action: #selector(fellow), for: .touchUpInside)
+        }
     }
     
     func config(){
-        
-        photosShow.zoomEnabled = true
-        photosShow.circular = false
-        photosShow.contentScaleMode = .scaleAspectFit
+        Server.shared().noteAddView(noteId: note.id) { _ in
+            print("added")
+        }
         
         let pageControl = UIPageControl()
         pageControl.pageIndicatorTintColor = .systemGray6
         pageControl.currentPageIndicatorTintColor = mainColor
         photosShow.pageIndicator = pageControl
         
+        let photoArr = self.photos.compactMap {KingfisherSource(urlString: $0.url)}
+        
+        photosShow.setImageInputs(photoArr)
+        photosShow.backgroundColor = .white
+        photosShow.currentSlideshowItem?.bounces = false
+        
+        photosShow.zoomEnabled = true
+        photosShow.circular = false
+        photosShow.contentScaleMode = .scaleAspectFit
+        
+        var imageRatio = note.ratio
+        if imageRatio > 1.35 {
+            imageRatio = 1.35
+        }else if imageRatio < 2.0 / 3.0 {
+            imageRatio = 2.0 / 3.0
+        }
+        let width = UIScreen.main.bounds.width
+        let pheight = imageRatio * width
+        imageHeight.constant = pheight
+        
+        commentTextView.textContainerInset = UIEdgeInsets(top: 11.5, left: 16, bottom: 11.5, right: 16)
+        
+        tableView.mj_footer = footer
+        tableView.mj_footer?.setRefreshingTarget(self, refreshingAction:  #selector(loadMoreData))
+    }
+    
+    @objc func loadMoreData(){
+        if !isGotAllData{
+            currentPage += 1
+            getComments()
+        }else{
+            footer.endRefreshingWithNoMoreData()
+        }
+    }
+    
+    func getComments(){
+        guard note.commentNumber != 0 else {footer.endRefreshingWithNoMoreData();return}
+        
+        Server.shared().fetchCommentsFromServer(noteId: note.id, page: currentPage) { [self] data in
+            guard let comments = data else { self.showTextHUD(showView: self.view, "评论加载失败"); return}
+            if comments.count == 0{
+                isGotAllData = true
+            }else{
+                for comment in comments {
+                    self.comments.append(comment)
+                }
+                if comments.count < eachPageCount{
+                    footer.endRefreshingWithNoMoreData()
+                }else{
+                    footer.endRefreshing()
+                }
+            }
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+            tableView.mj_footer?.endRefreshing()
+        }
     }
     
     @objc func slide(pan: UIPanGestureRecognizer){
@@ -359,5 +443,136 @@ class NoteDetailVC: UIViewController {
             self.showTextHUD(showView: self.view, "笔记发布成功")
         }
         present(vc, animated: true)
+    }
+    
+    @objc func keyboardWillChangeFrame(_ noti:Notification){
+        if let frame = (noti.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue{
+            let keyboardHeight = screenRect.height - frame.origin.y
+            
+            if keyboardHeight > 0{
+                view.insertSubview(overlayView, belowSubview: commentBarView)
+            }else{
+                overlayView.removeFromSuperview()
+                commentBarView.isHidden = true
+                commentTextView.text = ""
+            }
+            
+            commentBarBottom.constant = keyboardHeight
+            view.layoutIfNeeded()
+        }
+    }
+    
+    @objc func commentButtonActions(){
+        postComment.replyId = -1
+        postComment.superCommentId = -1
+        commentTextView.placeholder = "输入您的评论"
+        commentBarAppear()
+    }
+    
+    func commentBarAppear(){
+        commentTextView.becomeFirstResponder()
+        commentBarView.isHidden = false
+    }
+    
+    @objc func sendCommentAction(){
+        if commentTextView.text.isEmpty {
+            showTextHUD(showView: view, "评论为空")
+            return
+        }
+        showLoadHUD()
+        postComment.content = commentTextView.text
+        
+        Server.shared().postCommentToServer(data: postComment) { [self]res in
+            hideHUD()
+            guard let resoult = res else { self.showTextHUD(showView: self.view, "发送失败"); return}
+            if postComment.superCommentId == -1 {
+                comments.insert( Comment(id: resoult, content: commentTextView.text, createTime:"刚刚", user: appDelegate.user!), at: 0)
+                tableView.performBatchUpdates {
+                    tableView.insertSections(IndexSet(integer: 0), with: .automatic)
+                }
+                
+            }else{
+                for i in 0 ..< comments.count{
+                    if comments[i].id == postComment.superCommentId{
+                        if comments[i].replies == nil {
+                            comments[i].replies = []
+                        }
+                        comments[i].replies?.append(Comment(id: resoult, content: commentTextView.text, createTime:"刚刚", user: appDelegate.user!, replyId: postComment.replyId))
+                        if comments[i].showAllreplies == true || comments[i].replies!.count == 1{
+                            tableView.performBatchUpdates {
+                                tableView.insertRows(at: [IndexPath(row: comments[i].replies!.count - 1, section: i)], with: .automatic)
+                            }
+                        }else{
+                            let cell = tableView.cellForRow(at: IndexPath(row: 0, section: i)) as! CommentReplyCell
+                            let count = comments[i].replies!.count - 1
+                            cell.showMoreButton.isHidden = false
+                            cell.showMoreButton.setTitle("展开\(count)条回复", for: .normal)
+                            tableView.reloadRows(at: [IndexPath(row: 0, section: i)], with: .automatic)
+                        }
+                        
+                    }
+                }
+            }
+            updateComment()
+//            tableView.reloadData()
+            dismissKeyboard()
+        }
+        
+    }
+    
+    @objc func goTopicDetail(){
+        let vc = TopicDetailVC()
+        vc.topic = note.topic
+        vc.modalPresentationStyle = .fullScreen
+        vc.hero.isEnabled = true
+        vc.hero.modalAnimationType = .selectBy(presenting: .push(direction: .left), dismissing: .pull(direction: .right))
+        present(vc, animated: true)
+    }
+    
+    @objc func goMine(){
+        let vc = storyboard!.instantiateViewController(withIdentifier: kMeVCID) as! MeVC
+        vc.user = note.user
+        vc.isNoteUser = true
+        vc.isTabIten = false
+        let nav = UINavigationController(rootViewController: vc)
+        nav.modalPresentationStyle = .fullScreen
+        nav.hero.isEnabled = true
+        nav.hero.modalAnimationType = .selectBy(presenting: .push(direction: .left), dismissing: .pull(direction: .right))
+        present(nav, animated: true)
+    }
+    
+    @objc func goUserMine(){
+        let vc = storyboard!.instantiateViewController(withIdentifier: kMeVCID) as! MeVC
+        vc.isTabIten = false
+        let nav = UINavigationController(rootViewController: vc)
+        nav.modalPresentationStyle = .fullScreen
+        nav.hero.isEnabled = true
+        nav.hero.modalAnimationType = .selectBy(presenting: .push(direction: .left), dismissing: .pull(direction: .right))
+        present(nav, animated: true)
+    }
+    
+    @objc func commentToMine(noti:NSNotification){
+        guard let user = noti.object as? User else {return}
+        let vc = storyboard!.instantiateViewController(withIdentifier: kMeVCID) as! MeVC
+        vc.user = user
+        vc.isNoteUser = user.id == note.user.id
+        vc.isTabIten = false
+        let nav = UINavigationController(rootViewController: vc)
+        nav.modalPresentationStyle = .fullScreen
+        nav.hero.isEnabled = true
+        nav.hero.modalAnimationType = .selectBy(presenting: .push(direction: .left), dismissing: .pull(direction: .right))
+        present(nav, animated: true)
+    }
+  
+    func updateComment(){
+        var count = 0
+        for commment in comments{
+            count += 1
+            count += commment.replies?.count ?? 0
+        }
+        note.commentNumber = count
+        commenticonButton.setTitle("\(note.commentNumber)", for: .normal)
+        commentCountLabel.text = "\(note.commentNumber)"
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: kLikeSucceed), object: self.note)
     }
 }

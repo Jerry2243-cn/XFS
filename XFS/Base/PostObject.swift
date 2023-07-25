@@ -22,3 +22,11 @@ struct PostNote: Codable{
     var commentNumber = 0
     var token = Server.shared().token
 }
+
+struct PostComment: Codable{
+    var noteId:Int?
+    var content:String?
+    var replyId = -1
+    var superCommentId = -1
+    var token = Server.shared().token
+}

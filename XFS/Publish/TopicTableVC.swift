@@ -16,13 +16,20 @@ class TopicTableVC: UITableViewController, IndicatorInfoProvider {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
+       loadData()
     }
 
+    func loadData(){
+        showLoadHUD()
+        Server.shared().fetchTopicsByChannel(channel: channel) { data in
+            self.hideHUD()
+            if let topics = data{
+                self.topics = topics
+                self.tableView.reloadData()
+            }
+        }
+    }
+    
     func indicatorInfo(for pagerTabStripController: XLPagerTabStrip.PagerTabStripViewController) -> XLPagerTabStrip.IndicatorInfo {
         IndicatorInfo(title: channel)
     }

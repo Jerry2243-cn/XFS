@@ -11,6 +11,14 @@ import Kingfisher
 
 class WaterfallCodeCell: UICollectionViewCell {
     
+    var isMine = false{
+        didSet{
+            if isMine{
+                viewsView.isHidden = false
+            }
+        }
+    }
+    
     var note:Note?{
         didSet{
             guard let data = note else {return}
@@ -37,6 +45,7 @@ class WaterfallCodeCell: UICollectionViewCell {
                 likeButton.setImage(UIImage(systemName: "heart"), for: .normal)
                 likeButton.tintColor = .secondaryLabel
             }
+            viewsView.setTitle("\(data.views)", for: .normal)
             likeButton.setTitle(data.likeNumber == 0 ? "点赞" : "\(data.likeNumber)", for: .normal)
         }
     }
@@ -83,6 +92,26 @@ class WaterfallCodeCell: UICollectionViewCell {
         return button
     }()
     
+    lazy var viewsView: UIButton = {
+        let button = UIButton()
+        let symbolConfig = UIImage.SymbolConfiguration( scale: .unspecified)
+        let symbel = UIImage(systemName: "eye.fill", withConfiguration: symbolConfig)
+        button.setImage(symbel, for: .normal)
+        button.imageView?.contentMode = .scaleAspectFit
+        button.imageEdgeInsets = UIEdgeInsets(top: 5, left: -3, bottom: 5, right: 0)
+        button.titleEdgeInsets = UIEdgeInsets(top: 0, left: -2, bottom: 0, right: 2)
+        button.contentHorizontalAlignment = .center
+        button.titleLabel?.textAlignment = .left
+        button.setTitle("0", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 12)
+        button.tintColor = .white
+        button.setTitleColor(.white, for: .normal)
+        button.backgroundColor = UIColor(white: 0, alpha: 0.5)
+        button.layer.cornerRadius = 10
+        button.isHidden = true
+        return button
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setUI()
@@ -117,12 +146,12 @@ class WaterfallCodeCell: UICollectionViewCell {
         contentView.cornerRedius = 4
         contentView.layer.masksToBounds = true
         
-        
         contentView.addSubview(coverPhotoImageView)
         contentView.addSubview(titleLabel)
         contentView.addSubview(avatarImageView)
         contentView.addSubview(nicknameLabel)
         contentView.addSubview(likeButton)
+        contentView.addSubview(viewsView)
         
 //        coverPhotoImageView.snp.makeConstraints { make in
 //
@@ -149,6 +178,12 @@ class WaterfallCodeCell: UICollectionViewCell {
             make.width.equalTo(47)
             make.centerY.equalTo(avatarImageView)
             make.right.equalTo(contentView).offset(-10)
+        }
+        viewsView.snp.makeConstraints { make in
+            make.left.equalTo(coverPhotoImageView).offset(9)
+            make.bottom.equalTo(coverPhotoImageView).offset(-9)
+            make.height.equalTo(20)
+            make.width.equalTo(50)
         }
     }
     

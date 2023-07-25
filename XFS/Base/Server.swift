@@ -167,6 +167,23 @@ class Server{
         }
     }
     
+    func fetchTopicsByChannel(channel:String, completion:@escaping([String]?)->()){
+        AF.request(
+            "\(serverAddress)/getTopics",
+            method: .post,
+            parameters: ["channel" : "\(channel)" ],
+            encoder: JSONParameterEncoder.default
+        ).responseDecodable(of:[String : [String]].self) { data in
+//            debugPrint(data)
+            switch data.result{
+            case .success(let channels):
+                completion(channels["response"])
+            case .failure(_):
+                completion(nil)
+            }
+        }
+    }
+    
     func fetchNotesByChannel(channel:String, page:Int, completion:@escaping([Note]?)->()){
         AF.request(
             "\(serverAddress)/getNotes?page=\(page)",
@@ -286,12 +303,12 @@ class Server{
         }
     }
     
-    func fetchLikedNotes(page:Int, completion:@escaping([Note]?)->()){
+    func fetchLikedNotes(userId:Int?, page:Int, completion:@escaping([Note]?)->()){
         let url = "\(serverAddress)/getLikeNotes?page=\(page)"
         AF.request(
             url,
             method: .post,
-            parameters: ["token" : token],
+            parameters: ["token" : token, "userId" : "\(userId ?? -1)"],
             encoder: JSONParameterEncoder.default
         ).responseDecodable(of:[String : [Note]].self) { data in
             debugPrint(data)
@@ -304,12 +321,30 @@ class Server{
         }
     }
     
-    func fetchStarNotes(page:Int, completion:@escaping([Note]?)->()){
+    func fetchStarNotes(userId:Int?, page:Int, completion:@escaping([Note]?)->()){
         let url = "\(serverAddress)/getStarNotes?page=\(page)"
         AF.request(
             url,
             method: .post,
-            parameters: ["token" : token],
+            parameters: ["token" : token, "userId" : "\(userId ?? -1)"],
+            encoder: JSONParameterEncoder.default
+        ).responseDecodable(of:[String : [Note]].self) { data in
+            debugPrint(data)
+            switch data.result{
+            case .success(let channels):
+                completion(channels["response"])
+            case .failure(_):
+                completion(nil)
+            }
+        }
+    }
+    
+    func searchNotes(keyword:String, page:Int, completion:@escaping([Note]?)->()){
+        let url = "\(serverAddress)/searchNotes?page=\(page)"
+        AF.request(
+            url,
+            method: .post,
+            parameters: ["token" : token, "keyword" : "\(keyword)"],
             encoder: JSONParameterEncoder.default
         ).responseDecodable(of:[String : [Note]].self) { data in
             debugPrint(data)
@@ -355,6 +390,132 @@ class Server{
                 }else{
                     completion("操作失败")
                 }
+            case .failure(_):
+                completion(nil)
+            }
+        }
+    }
+    
+    func postCommentToServer(data:PostComment, resoult: @escaping (Int?)->()){
+        AF.request(
+            serverAddress + "/postComment",
+            method: .post,
+            parameters: data,
+            encoder: JSONParameterEncoder.default
+        ).responseDecodable(of:[String : Int].self) { data in
+            debugPrint(data)
+            switch data.result{
+            case .success(let channels):
+                resoult(channels["response"])
+            case .failure(_):
+                resoult(nil)
+            }
+        }
+    }
+    
+    func fetchCommentsFromServer(noteId:Int, page:Int, completion: @escaping ([Comment]?)->()){
+        AF.request(
+            "\(serverAddress)/getComments?page=\(page)",
+            method: .post,
+            parameters: ["token" : token, "noteId" : "\(noteId)"],
+            encoder: JSONParameterEncoder.default
+        ).responseDecodable(of:[String : [Comment]].self) { data in
+            debugPrint(data)
+            switch data.result{
+            case .success(let channels):
+                completion(channels["response"])
+            case .failure(_):
+                completion(nil)
+            }
+        }
+    }
+    
+    func deleteComment(commentId:Int, completion:@escaping(String?)->()){
+        AF.request(
+            serverAddress + "/deleteComment",
+            method: .post,
+            parameters: ["token" : token ,"commentId" : "\(commentId)"],
+            encoder: JSONParameterEncoder.default
+        ).responseDecodable(of:[String : String].self) {data in
+            debugPrint(data)
+            switch data.result{
+            case .success(let res):
+                if res["response"] == "success" {
+                    completion("操作成功")
+                }else{
+                    completion("操作失败")
+                }
+            case .failure(_):
+                completion(nil)
+            }
+        }
+    }
+    
+    func fetchTopicsFromServer(completion: @escaping ([Topic]?)->()){
+        AF.request(
+            "\(serverAddress)/getAllTopics"
+        ).responseDecodable(of:[String : [Topic]].self) { data in
+            debugPrint(data)
+            switch data.result{
+            case .success(let channels):
+                completion(channels["response"])
+            case .failure(_):
+                completion(nil)
+            }
+        }
+    }
+    
+    func fetchtopicNotes(topic:String, page:Int, completion:@escaping([Note]?)->()){
+        let url = "\(serverAddress)/getTopicNotes?page=\(page)"
+        AF.request(
+            url,
+            method: .post,
+            parameters: ["token" : token, "topic" : topic],
+            encoder: JSONParameterEncoder.default
+        ).responseDecodable(of:[String : [Note]].self) { data in
+            debugPrint(data)
+            switch data.result{
+            case .success(let channels):
+                completion(channels["response"])
+            case .failure(_):
+                completion(nil)
+            }
+        }
+    }
+    
+    func noteAddView(noteId:Int, completion:@escaping(String?)->()){
+        AF.request(
+            serverAddress + "/noteAddView",
+            method: .post,
+            parameters: ["token" : token ,"noteId" : "\(noteId)"],
+            encoder: JSONParameterEncoder.default
+        ).responseDecodable(of:[String : String].self) {data in
+            debugPrint(data)
+            switch data.result{
+            case .success(let res):
+                if res["response"] == "success" {
+                    completion("操作成功")
+                }else{
+                    completion("操作失败")
+                }
+            case .failure(_):
+                completion(nil)
+            }
+        }
+    }
+    
+    func searchUsers(keyword:String, page:Int, completion:@escaping([User]?)->()){
+        let url = "\(serverAddress)/searchUsers?page=\(page)"
+        AF.request(
+            url,
+            method: .post,
+            parameters: ["token" : token, "keyword" : "\(keyword)"],
+            encoder: JSONParameterEncoder.default
+        ).responseDecodable(of:[String : [User]].self) { data in
+            debugPrint(data)
+            switch data.result{
+            case .success(let channels):
+                completion(channels["response"])
             case .failure(_):
                 completion(nil)
             }

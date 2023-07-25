@@ -50,8 +50,26 @@ struct User: Codable,Equatable{
 }
 
 struct Topic: Codable{
+    var id = -1
     var name = ""
-    var channel:String?
+    var channel:Channel?
+    var views = 0
+}
+
+struct Channel:Codable {
+    var name = ""
+    
+}
+
+struct Comment:Codable{
+    var id = -1
+    var content = "这是评论"
+    var createTime = ""
+    var user = User()
+    var likeNumber = 0
+    var showAllreplies:Bool? = false
+    var replyId:Int?
+    var replies:[Comment]?
 }
 
 struct POI: Comparable, Codable{

@@ -1,25 +1,34 @@
 //
-//  TopicSelectVC.swift
+//  ResoultVCViewController.swift
 //  XFS
 //
-//  Created by Jerry Zhu on 2022/10/9.
+//  Created by Jerry Zhu on 2023/1/6.
 //
 
 import UIKit
 import XLPagerTabStrip
 
-class TopicSelectVC: ButtonBarPagerTabStripViewController {
+class ResoultVC: ButtonBarPagerTabStripViewController {
     
-    var PVDelegate: TopicSelectViewControllerDelegate?
+    var keyword:String?{
+        didSet{
+            guard let _ = self.keyword else {return}
+            self.reloadPagerTabStripView()
+        }
+    }
 
     override func viewDidLoad() {
-        self.settings.style.selectedBarHeight = 2
-        self.settings.style.selectedBarBackgroundColor = mainColor!
+        self.settings.style.selectedBarHeight = 0
         
         self.settings.style.buttonBarBackgroundColor = .clear
         self.settings.style.buttonBarItemBackgroundColor = .clear
+        self.settings.style.buttonBarItemTitleColor = .label
         self.settings.style.buttonBarItemFont = .systemFont(ofSize: 16)
+        self.settings.style.buttonBarLeftContentInset = 16
+        self.settings.style.buttonBarItemsShouldFillAvailableWidth = false
         super.viewDidLoad()
+
+         
         changeCurrentIndexProgressive = { (oldCell: ButtonBarViewCell?, newCell: ButtonBarViewCell?, progressPercentage: CGFloat, changeCurrentIndex: Bool, animated: Bool) -> Void in
             guard changeCurrentIndex == true else { return }
 
@@ -39,28 +48,18 @@ class TopicSelectVC: ButtonBarPagerTabStripViewController {
                 oldCell?.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
             }
         }
-       
-        // Do any additional setup after loading the view.
     }
     
+
     override func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
-        var vcs:[UIViewController] = []
-        for i in kChannels.indices{
-            let vc = storyboard!.instantiateViewController(identifier: kTopicTableVCID) as! TopicTableVC
-            vc.channel = kChannels[i]
-            vcs.append(vc)
-        }
-        return vcs
+        let sb = UIStoryboard(name: "Main", bundle: nil)
+        let noteVC = sb.instantiateViewController(identifier: kWaterFallVCID) as! WaterFallVC
+        let userVC = UserTableView()
+        noteVC.cellType = .search
+        noteVC.seachKeyWord = keyword
+        noteVC.channel = "笔记"
+        userVC.keyword = keyword
+        return [noteVC,userVC]
     }
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destination.
-        // Pass the selected object to the new view controller.
-    }
-    */
 
 }

@@ -11,6 +11,7 @@ PODS:
   - CHTCollectionViewWaterfallLayout/Swift (0.9.10)
   - DateToolsSwift (5.0.0)
   - FaveButton (3.2.1)
+  - GrowingTextView (0.7.2)
   - Hero (1.6.2)
   - ImageSlideshow (1.9.2):
     - ImageSlideshow/Core (= 1.9.2)
@@ -44,6 +45,7 @@ DEPENDENCIES:
   - CHTCollectionViewWaterfallLayout
   - DateToolsSwift
   - FaveButton
+  - GrowingTextView
   - Hero
   - ImageSlideshow (~> 1.9.0)
   - ImageSlideshow/Kingfisher
@@ -69,6 +71,7 @@ SPEC REPOS:
     - CHTCollectionViewWaterfallLayout
     - DateToolsSwift
     - FaveButton
+    - GrowingTextView
     - Hero
     - ImageSlideshow
     - Kingfisher
@@ -94,6 +97,7 @@ SPEC CHECKSUMS:
   CHTCollectionViewWaterfallLayout: b989a459788d7657ac010e03bc0f7eedca95a420
   DateToolsSwift: 4207ada6ad615d8dc076323d27037c94916dbfa6
   FaveButton: 93cfebf6030336fa7653fad2068c3152ed668b39
+  GrowingTextView: 876bf42005b5e4a4fd740597db12caaf41f0fe6c
   Hero: c69009dbc9e2f0472e081adc644dba05fcedae72
   ImageSlideshow: be305b54eaf2b2cfc7a7141c7c734605d44dc07d
   Kingfisher: 13f6e68c928eb50439b5cb2ea75d6035018438ea
@@ -110,6 +114,6 @@ SPEC CHECKSUMS:
   XLPagerTabStrip: 61c57fd61f611ee5f01ff1495ad6fbee8bf496c5
   YPImagePicker: f36043210c10b0783034eb1947d6e06e31c461e4
 
-PODFILE CHECKSUM: 00ace30de9f5f0f1cb208e9454b0486bcfa1dd1d
+PODFILE CHECKSUM: 1609053cfcd4d633587c535faf8d4103dc51e55a
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.1

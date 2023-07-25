@@ -19,7 +19,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
         statusBarH = UIApplication.shared.windows.first?.windowScene?.statusBarManager?.statusBarFrame.height ?? 0
-        
+        if Server.shared().token == ""{
+            let nav = UINavigationController(rootViewController: LoginVC())
+            UIApplication.shared.windows.first?.rootViewController = nav
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

@@ -143,16 +143,22 @@ class LoginVC: UIViewController {
                     }
                     
                 }else{
+                    self.hideHUD()
                     self.showTextHUD(showView: self.view, "用户名或密码错误")
                 }
             }else{
+                self.hideHUD()
                 self.showTextHUD(showView: self.view, "系统错误")
             }
         }
     }
     
     @objc func goSignIn(){
-        self.navigationController?.pushViewController(SignInVC(), animated: true)
+        let vc = SignInVC()
+        vc.doneAction = { [self] in
+            showTextHUD(showView: view, "注册成功")
+        }
+        self.navigationController?.pushViewController(vc, animated: true)
     }
 }
 

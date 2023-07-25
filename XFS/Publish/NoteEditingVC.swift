@@ -139,6 +139,8 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
         }
         if let note = self.note{
             draftNote.id = Int16(note.id)
+        }else{
+            draftNote.id = -1
         }
         draftNote.photos = try? JSONEncoder().encode(photos)
         draftNote.title = titleTextField.text
@@ -151,7 +153,8 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
         draftNote.topic = topic
         draftNote.updatedAt = Date()
         appDelegate.saveContext()
-        
+        UserDefaults.increase(userDefaultsDraftNotesCount)
+        NotificationCenter.default.post(name: NSNotification.Name(khaveDraftNote), object: nil)
         if let _ = self.draftNote{
             navigationController?.popViewController(animated: true)
         }else{
@@ -245,7 +248,7 @@ class NoteEditingVC: UIViewController, AMapLocationManagerDelegate, AMapSearchDe
                 updateTopic(channel: note.channel!, topic: note.topic!)
             }
         if note.poiName != "" && note.poiName != nil{
-                let poi = POI(name: note.poiName!,address: note.poiAddress!,latitude: note.latitude, longitude: note.longtitude)
+                let poi = POI(name: note.poiName!,address: note.poiAddress ?? "",latitude: note.latitude, longitude: note.longtitude)
                 updateLocation(poi: poi)
             }
     }

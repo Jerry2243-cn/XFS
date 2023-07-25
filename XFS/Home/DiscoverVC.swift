@@ -51,6 +51,8 @@ class DiscoverVC: ButtonBarPagerTabStripViewController, IndicatorInfoProvider {
                 if let channels = res {
                     if channels.count != 0 {
                         self.channels = channels
+                        kChannels = channels
+                        kChannels.remove(at: 0)
                         debugPrint(self.channels)
                     }
                 }

@@ -143,6 +143,11 @@ extension UIImage{
 
 extension Date{
     func formatDate(isoDate:String) -> String{
+        
+        if isoDate == "刚刚"{
+            return isoDate
+        }
+        
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZZZZZ"
         dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
@@ -171,5 +176,34 @@ extension Date{
         }else{
             return "error time"
         }
+    }
+}
+
+extension String{
+    func spliceAttrStr(_ dateStr: String) -> NSAttributedString{
+        let attrText = toAttrStr()
+        let attrDate = "  \(dateStr)".toAttrStr(12,.secondaryLabel)
+        
+        attrText.append(attrDate)
+        
+        return attrText
+    }
+    
+    func toAttrStr(_ fontSize: CGFloat = 14, _ color:UIColor = .label) -> NSMutableAttributedString{
+        let attr: [NSAttributedString.Key : Any] = [
+            .font : UIFont.systemFont(ofSize: fontSize),
+            .foregroundColor : color
+        ]
+        return NSMutableAttributedString(string: self, attributes: attr)
+    }
+}
+
+extension UserDefaults{
+    static func increase(_ key:String, by val:Int = 1){
+        standard.set(standard.integer(forKey: key) + val, forKey: key)
+    }
+    
+    static func decrease(_ key:String, by val:Int = 1){
+        standard.set(standard.integer(forKey: key) - val, forKey: key)
     }
 }

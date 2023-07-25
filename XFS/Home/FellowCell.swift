@@ -81,7 +81,6 @@ class FellowCell: UICollectionViewCell {
     @IBOutlet weak var shareButton: UIButton!
     @IBOutlet weak var notePublishTime: UILabel!
 
-    
     @IBOutlet weak var photosShow: ImageSlideshow!
     @IBOutlet weak var nicknameLable: UILabel!
     @IBOutlet weak var avatarImageView: UIImageView!
@@ -93,7 +92,20 @@ class FellowCell: UICollectionViewCell {
         config()
         likeButton.addTarget(self, action: #selector(likeAction), for: .touchUpInside)
         favouriteButton.addTarget(self, action: #selector(starAction), for: .touchUpInside)
+        commentButton.addTarget(self, action: #selector(showDetail), for: .touchUpInside)
+        showCOntentButton.addTarget(self, action: #selector(showDetail), for: .touchUpInside)
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(clickAction))
+        avatarImageView.addGestureRecognizer(tap)
+        
+        let tap1 = UITapGestureRecognizer(target: self, action: #selector(clickAction))
+        nicknameLable.addGestureRecognizer(tap1)
     }
+    
+    @objc func clickAction(){
+        NotificationCenter.default.post(name: NSNotification.Name(kGotoMine), object: note?.user)
+    }
+
     
     func config(){
         
@@ -107,6 +119,15 @@ class FellowCell: UICollectionViewCell {
         photosShow.pageIndicator = pageControl
         
        
+    }
+    
+    @objc func showDetail(){
+        let detaiNoteVC = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(identifier: kNoteDetailVCID) { coder in
+            NoteDetailVC(coder: coder, note: self.note!)
+        }
+        detaiNoteVC.modalPresentationStyle = .fullScreen
+        detaiNoteVC.hero.isEnabled = false
+        NotificationCenter.default.post(name: NSNotification.Name(kShowNoteDetail), object: detaiNoteVC)
     }
     
     @objc func starAction(){

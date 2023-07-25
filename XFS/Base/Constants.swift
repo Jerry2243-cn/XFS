@@ -11,6 +11,7 @@ import UIKit
 let eachPageCount = 10
 let userDefaultsTokenKey = "user_token"
 let userDefaultslastOpenTime = "last_login_date"
+let userDefaultsDraftNotesCount = "draftNotesCount"
 
 //let serverAddress = "http://127.0.0.1:8080"
 let serverAddress = "http://jerrys-macbook.local:8080"
@@ -23,6 +24,12 @@ let kRefreshNotes = "refreshNotes"
 let kUpdateLoaction = "updateLoaction"
 let kUpdateuser = "updateUser"
 let kDeleteNote = "deleteNote"
+let kShowNoteDetail = "showNoteDetail"
+let kFellow = "fellow"
+let kGotoMine = "gotoMine"
+let kUpdateFellow = "updateFellow"
+let kNoDraftNote = "noDraftNote"
+let khaveDraftNote = "haveDraftNote"
 
 // MARK: StoaryBOardID
 let kMainTabBar = "mainID"
@@ -37,6 +44,8 @@ let kDraftNoteNaviVCID = "draftNoteNaviVCID"
 let kMessageVCID = "messageVCID"
 let kNotficationLIstVC = "notficationLIstVC"
 let kMeVCID = "meVCID"
+let kCommentViewID = "commentViewID"
+let kCommentSectionFooterView = "commentSectionFooterView"
 
 // MARK: CellID
 let kWaterFallCellID = "waterFallCellID"
@@ -51,15 +60,21 @@ let kDraftNoteWaterfallID = "draftNoteWaterfallID"
 let kMessageCellID = "messageCellID"
 let kNearbyCodeCell = "nearbyCodeCellID"
 let kWaterfallCodeCell = "waterfallCodeCellID"
+let kReplayCellID = "replayCellID"
+let kUserCellID = "userCellID"
+let kDraftCellID = "draftCellID"
 
 let kWaterFallpadding:CGFloat = 5
 let kMaxPhotoCount = 9
 let kMaxTitleCount = 20
 let kMaxContentCount = 1000
 let mainColor = UIColor(named: "main_color")
-
+let statusBarHeight = UIApplication.shared.statusBarFrame.size.height
+let screenWidth = UIScreen.main.bounds.width
+let navigationBarHeight:CGFloat = 54
 let appDelegate = UIApplication.shared.delegate as! AppDelegate
 let context = appDelegate.persistentContainer.viewContext
+let screenRect = UIScreen.main.bounds
 
 let imagePH = UIImage(named: "loadFailedImage")!
 let defaultAvatar = UIImage(named: "avatarDefault")!
@@ -67,7 +82,7 @@ let defaultAvatar = UIImage(named: "avatarDefault")!
 let imageServerURL = "https://xfs-picture.oss-cn-hangzhou.aliyuncs.com/"
 
 //测试占位数据
-let kChannels = ["推荐","电影"]
+var kChannels = ["推荐","电影"]
 let kTopics = [
     ["穿神马是神马", "就快瘦到50斤啦", "花5个小时修的靓图", "网红店入坑记"],
     ["魔都名媛会会长", "爬行西藏", "无边泳池只要9块9"],

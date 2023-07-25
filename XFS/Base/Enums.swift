@@ -15,4 +15,6 @@ enum WaterfallCellType{
     case like
     case star
     case fellow
+    case topic
+    case search
 }

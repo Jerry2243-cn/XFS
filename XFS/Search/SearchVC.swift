@@ -7,6 +7,7 @@
 
 import UIKit
 import XLPagerTabStrip
+import Hero
 
 class SearchVC:UIViewController ,UISearchBarDelegate {
 
@@ -21,10 +22,19 @@ class SearchVC:UIViewController ,UISearchBarDelegate {
         // Do any additional setup after loading the view.
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        searchBar.text = ""
+    }
 
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         //搜索操作
         searchBar.resignFirstResponder()
+        let vc = SearchResoultVC()
+        vc.keyWords = searchBar.text
+        vc.modalPresentationStyle = .fullScreen
+        vc.hero.isEnabled = true
+        vc.hero.modalAnimationType = .selectBy(presenting: .push(direction: .left), dismissing: .pull(direction: .right))
+        present(vc, animated: true)
     }
 
 //    override func viewControllers(for pagerTabStripController: PagerTabStripViewController) -> [UIViewController] {
@@ -35,7 +45,7 @@ class SearchVC:UIViewController ,UISearchBarDelegate {
 //        userVC.channel = "用户"
 //        userVC.cellType = .fellow
 //
-//        return [noteVC,userVC]
+//        return [noteVC]
 //    }
   
 }

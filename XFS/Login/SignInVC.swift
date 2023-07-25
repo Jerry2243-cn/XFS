@@ -8,6 +8,8 @@
 import UIKit
 
 class SignInVC: UIViewController {
+    
+    var doneAction:(()->())?
 
     lazy var usernameTF = { (h:CGFloat) -> UITextField in
         let blankView = UIView(frame: CGRect(x: .zero, y: .zero, width: h / 2, height: h))
@@ -147,6 +149,7 @@ class SignInVC: UIViewController {
         Server.shared().signIn(user: user) { res in
             if let resoult = res{
                 if resoult == "注册成功"{
+                    self.doneAction?()
                     self.navigationController?.popViewController(animated: true)
                 }else{
                     self.showTextHUD(showView: self.view, resoult)

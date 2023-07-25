@@ -27,4 +27,5 @@ target 'XFS' do
     pod 'SwiftyJSON'
     pod 'Kingfisher' , '6.0'
     pod 'ImageSlideshow/Kingfisher'
+    pod 'GrowingTextView'
 end

@@ -24,16 +24,19 @@ class WaterFallVC: UICollectionViewController, SegementSlideContentScrollViewDel
     }
     
     var userId:Int?
+    var topic:String?
+    var seachKeyWord:String?
     
     var popOpt: (()->())?
     
     lazy var myPOI = POI()
     var channel = ""
-    var cellType: WaterfallCellType = .draftNote
+    var cellType: WaterfallCellType = .discover
     
     var dataList:[Any] = []
     var currentPage = 0
     var isGotAllData = false
+    var hasDraftNote = false
     
     lazy var footer = MJRefreshAutoNormalFooter()
     lazy var header = MJRefreshNormalHeader()
@@ -42,11 +45,22 @@ class WaterFallVC: UICollectionViewController, SegementSlideContentScrollViewDel
         super.viewDidLoad()
         collectionView.register(WaterfallCodeCell.self, forCellWithReuseIdentifier: kWaterfallCodeCell)
         collectionView.register(NearbyCodeCell.self, forCellWithReuseIdentifier: kNearbyCodeCell)
+        collectionView.register(UINib(nibName: "DraftCell", bundle: nil), forCellWithReuseIdentifier: kDraftCellID)
         config()
         getData()
         NotificationCenter.default.addObserver(self, selector: #selector(refreshData), name:NSNotification.Name(kRefreshNotes) , object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(likeOption(noti:)), name:NSNotification.Name(kLikeSucceed) , object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(deleteOption(noti:)), name:NSNotification.Name(kDeleteNote) , object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateFellow(noti:)), name:NSNotification.Name(kUpdateFellow) , object: nil)
+        if cellType == .fellow{
+            NotificationCenter.default.addObserver(self, selector: #selector(showDetail(noti:)), name:NSNotification.Name(kShowNoteDetail) , object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(goMine(noti:)), name:NSNotification.Name(kGotoMine) , object: nil)
+        }
+        if cellType == .mine{
+            NotificationCenter.default.addObserver(self, selector: #selector(noDraftNoteAction), name:NSNotification.Name(kNoDraftNote) , object: nil)
+            NotificationCenter.default.addObserver(self, selector: #selector(haveDraftNoteAction), name:NSNotification.Name(khaveDraftNote) , object: nil)
+        }
+        
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -103,9 +117,14 @@ extension WaterFallVC: CHTCollectionViewDelegateWaterfallLayout{
     //定义cell大小
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
+        if cellType == .mine && hasDraftNote && indexPath.item == 0{
+            let width = (screenRect.width - kWaterFallpadding * 3) / 2
+            return CGSize(width: width, height: 120 )
+        }
+        
         if cellType == .fellow {
             guard let note = dataList[indexPath.item] as? Note else{return CGSize()}
-            let cellW = UIScreen.main.bounds.width
+            let cellW = screenRect.width
             var imageRato = note.ratio
             if imageRato > 1.35 {
                 imageRato = 1.35
@@ -143,7 +162,7 @@ extension WaterFallVC: CHTCollectionViewDelegateWaterfallLayout{
                 imageRatio = h / w
             }
         }
-        let cellW = (UIScreen.main.bounds.width - kWaterFallpadding * 3) / 2
+        let cellW = (screenRect.width - kWaterFallpadding * 3) / 2
         if imageRatio > 1.35 {
             imageRatio = 1.35
         }else if imageRatio < 2.0 / 3.0 {
@@ -203,7 +222,6 @@ extension WaterFallVC{
         
         getData()
         collectionView.mj_footer?.resetNoMoreData()
-        collectionView.mj_header?.endRefreshing()
 
     }
     
@@ -232,6 +250,10 @@ extension WaterFallVC{
             loadStarNotes(page: currentPage)
         case .fellow:
             loadFellowNotes(page: currentPage)
+        case .topic:
+            loadTopicNotes(page: currentPage)
+        case .search:
+            loadSearchNotes(page: currentPage)
         }
     }
 }
@@ -241,6 +263,7 @@ extension WaterFallVC{
     
     //获取草稿笔记
     func loadDraftNotes(page:Int){
+        hideHUD()
         let request = DraftNote.fetchRequest() as NSFetchRequest<DraftNote>
         request.fetchLimit = eachPageCount
         request.fetchOffset = page * eachPageCount
@@ -275,7 +298,7 @@ extension WaterFallVC{
     }
     
     func loadLikeNotes(page:Int){
-        Server.shared().fetchLikedNotes(page: page) {data in
+        Server.shared().fetchLikedNotes(userId: self.userId, page: page) {data in
             self.loadedData(page: page, data: data)
         }
     }
@@ -288,7 +311,7 @@ extension WaterFallVC{
     }
     
     func loadStarNotes(page:Int){
-        Server.shared().fetchStarNotes(page: page) {data in
+        Server.shared().fetchStarNotes(userId: self.userId, page: page) {data in
             self.loadedData(page: page, data: data)
         }
     }
@@ -299,17 +322,38 @@ extension WaterFallVC{
         }
     }
     
+    func loadTopicNotes(page: Int){
+        guard let topic = self.topic else {return}
+        Server.shared().fetchtopicNotes(topic: topic, page: page) { data in
+            self.loadedData(page: page, data: data)
+        }
+    }
+    
+    func loadSearchNotes(page: Int){
+        guard let keyword = self.seachKeyWord else {return}
+        Server.shared().searchNotes(keyword: keyword, page: page) { data in
+            self.loadedData(page: page, data: data)
+        }
+    }
+    
     func loadedData(page:Int, data:[Note]?){
         guard let notes = data else {
             showTextHUD(showView: self.view, "加载笔记失败")
             return
         }
+        if page == 0{
+            dataList = []
+            if cellType == .mine && hasDraftNote{
+                dataList.append(Data())
+            }
+        }
         if notes.count == 0{
             isGotAllData = true
-        }else{
-            if page == 0{
-                dataList = []
+            if cellType == .search && notes.count == 0{
+                showTextHUD(showView: self.view, "没有找到相关笔记")
             }
+            footer.endRefreshingWithNoMoreData()
+        }else{
             for note in notes{
                 dataList.append(note)
             }
@@ -318,10 +362,12 @@ extension WaterFallVC{
             }else{
                 footer.endRefreshing()
             }
-            DispatchQueue.main.async {
-                self.collectionView.reloadData()
-            }
+            
         }
+        DispatchQueue.main.async {
+            self.collectionView.reloadData()
+        }
+        collectionView.mj_header?.endRefreshing()
     }
 }
 
@@ -336,9 +382,24 @@ extension WaterFallVC{
     }
     
     
-    func loadDiscoverNoteCell(_ collectionView: UICollectionView,_ indexPath: IndexPath) -> WaterfallCodeCell{
+    func loadDiscoverNoteCell(_ collectionView: UICollectionView,_ indexPath: IndexPath) -> UICollectionViewCell{
+        if cellType == .mine && hasDraftNote && indexPath.row == 0{
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kDraftCellID, for: indexPath) as! DraftCell
+            let request = DraftNote.fetchRequest() as NSFetchRequest<DraftNote>
+            request.fetchLimit = 1
+            request.propertiesToFetch = ["coverPhoto","updatedAt","title"]
+            let draftNote = (try! context.fetch(request))[0]
+            
+            cell.notesCountLabel.text = "\(UserDefaults.standard.integer(forKey: userDefaultsDraftNotesCount))"
+            cell.coverPhotoImageView.image = UIImage(draftNote.coverPhoto)
+            return cell
+        }
+        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: kWaterfallCodeCell, for: indexPath) as! WaterfallCodeCell
         cell.note = dataList[indexPath.item] as? Note
+        if cellType == .mine && userId == appDelegate.user?.id{
+            cell.isMine = true
+        }
         cell.hero.id = "cover\(cell.note?.id ?? indexPath.item)\(cellType)"
         return cell
     }
@@ -370,11 +431,16 @@ extension WaterFallVC{
             context.delete(seletedNoote)
             appDelegate.saveContext()
             self.dataList.remove(at: index)
+            UserDefaults.decrease(userDefaultsDraftNotesCount)
             //视图
             self.collectionView.performBatchUpdates {
                 self.collectionView.deleteItems(at: [IndexPath(item: index, section: 0)])
             }
             self.collectionView.reloadData()
+            if self.dataList.isEmpty{
+                self.dismiss(animated: true)
+                NotificationCenter.default.post(name: NSNotification.Name(kNoDraftNote), object: nil)
+            }
         }
         alert.addAction(cancelAction)
         alert.addAction(deleteAction)
@@ -385,12 +451,22 @@ extension WaterFallVC{
 extension WaterFallVC{
     
     func discoverNoteCellTap(_ collectionView: UICollectionView,_ indexPath: IndexPath){
+        if cellType == .mine && hasDraftNote && indexPath.item == 0{
+            let vc = storyboard!.instantiateViewController(withIdentifier: kWaterFallVCID) as! WaterFallVC
+            vc.cellType = .draftNote
+            let nav = UINavigationController(rootViewController: vc)
+            nav.modalPresentationStyle = .fullScreen
+            present(nav, animated: true)
+            return
+        }
+        
         let detaiNoteVC = storyboard!.instantiateViewController(identifier: kNoteDetailVCID) { coder in
             NoteDetailVC(coder: coder, note: self.dataList[indexPath.item] as! Note)
         }
         detaiNoteVC.modalPresentationStyle = .fullScreen
         let note = dataList[indexPath.item] as! Note
         detaiNoteVC.noteDetalHeroID = "cover\(note.id)\(cellType)"
+        detaiNoteVC.hero.isEnabled = true
         present(detaiNoteVC, animated: true)
     }
     
@@ -401,6 +477,7 @@ extension WaterFallVC{
         detaiNoteVC.modalPresentationStyle = .fullScreen
         let note = dataList[indexPath.item] as! Note
         detaiNoteVC.noteDetalHeroID = "cover\(note.id)\(cellType)"
+        detaiNoteVC.hero.isEnabled = true
         present(detaiNoteVC, animated: true)
     }
     
@@ -420,11 +497,16 @@ extension WaterFallVC{
             }
             vc.publishNoteOptions = {
                 self.showTextHUD(showView: self.view, "笔记发布成功")
-                let seletedNoote = self.dataList[indexPath.item] as! DraftNote
+                let seletedNoote = self.dataList[indexPath .item] as! DraftNote
                 context.delete(seletedNoote)
+                UserDefaults.decrease(userDefaultsDraftNotesCount)
                 appDelegate.saveContext()
                 self.dataList.remove(at: indexPath.item)
                 self.collectionView.reloadData()
+                if self.dataList.isEmpty{
+                    self.dismiss(animated: true)
+                    NotificationCenter.default.post(name: NSNotification.Name(kNoDraftNote), object: nil)
+                }
             }
             navigationController?.pushViewController(vc, animated: true)
             
@@ -438,7 +520,8 @@ extension WaterFallVC{
     
     @objc func likeOption(noti:NSNotification){
         let newNote = noti.object as! Note
-        for i in 0 ..< self.dataList.count {
+        let start = hasDraftNote && cellType == .mine ? 1 : 0
+        for i in start ..< self.dataList.count {
             var n = self.dataList[i] as! Note
             if n.user.id == newNote.user.id && n.user.fellow != newNote.user.fellow{
                 n.user = newNote.user
@@ -462,7 +545,8 @@ extension WaterFallVC{
     
     @objc func deleteOption(noti:NSNotification){
         let deleteNoteId = noti.object as! Int
-        for i in 0 ..< self.dataList.count {
+        let start = hasDraftNote && cellType == .mine ? 1 : 0
+        for i in start ..< self.dataList.count {
             let note = self.dataList[i] as! Note
             if note.id == deleteNoteId{
                 self.dataList.remove(at: i)
@@ -472,5 +556,51 @@ extension WaterFallVC{
                 return
             }
         }
+    }
+    
+    @objc func showDetail(noti:NSNotification){
+        let vc = noti.object as! NoteDetailVC
+        present(vc, animated: true)
+    }
+    
+    @objc func goMine(noti:NSNotification){
+        guard let user = noti.object as? User else {return}
+        let vc = storyboard!.instantiateViewController(withIdentifier: kMeVCID) as! MeVC
+        vc.user = user
+        vc.isTabIten = false
+        let nav = UINavigationController(rootViewController: vc)
+        nav.modalPresentationStyle = .fullScreen
+        nav.hero.isEnabled = true
+        nav.hero.modalAnimationType = .selectBy(presenting: .push(direction: .left), dismissing: .pull(direction: .right))
+        present(nav, animated: true)
+    }
+    
+    @objc func updateFellow(noti:NSNotification){
+        let id = noti.object as! Int
+        let start = hasDraftNote && cellType == .mine ? 1 : 0
+        for i in start ..< self.dataList.count {
+            var note = self.dataList[i] as! Note
+            if note.user.id == id{
+                note.user.fellow.toggle()
+                dataList[i] = note
+            }
+        }
+    }
+    
+    @objc func noDraftNoteAction(){
+        hasDraftNote = false
+        if dataList[0] is Data {
+            dataList.remove(at: 0)
+            collectionView.reloadData()
+        }
+       
+    }
+    
+    @objc func haveDraftNoteAction(){
+        hasDraftNote = true
+        if !(dataList[0] is Data){
+            dataList.insert(Data(), at: 0)
+        }
+        collectionView.reloadData()
     }
 }

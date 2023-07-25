@@ -62,6 +62,7 @@ class SettingsVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "settingsCell") as! SettingsCell
         cell.accessoryType = .disclosureIndicator
+       
         switch indexPath.section{
         case 0 :
             if indexPath.row == 0 {
@@ -91,6 +92,7 @@ class SettingsVC: UIViewController,UITableViewDelegate,UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: false)
         switch indexPath.section{
         case 3:
             logoutAlert()
